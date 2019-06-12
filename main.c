@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/06/12 17:16:33 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/12 22:24:23 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,20 @@ void		provider(t_rtv1 *rtv1)
 	//mlx_put_image_to_window(rtv1->mlx_ptr, rtv1->win_ptr, rtv1->image, 0, 0);///////////////////////////////
 
 	rtv1->screen = SDL_CreateTextureFromSurface(rtv1->renderer, rtv1->surface);
+
+
+	int i = 0;
+    while (i < rtv1->c_buttons)
+    {
+        SDL_BlitSurface((rtv1->buttons[i].is_pressed ? rtv1->buttons[i].pressed : rtv1->buttons[i].surface), &((SDL_Rect){-rtv1->buttons[i].x, -rtv1->buttons[i].y, rtv1->buttons[i].x + 100, rtv1->buttons[i].y + 30}), rtv1->ui, NULL);
+        i++;
+    }
+
+	rtv1->ui_tex = SDL_CreateTextureFromSurface(rtv1->renderer, rtv1->ui);
 	//SDL_FreeSurface(rtv1->surface);
 	SDL_RenderClear(rtv1->renderer); //Очистка рендера
     SDL_RenderCopy(rtv1->renderer, rtv1->screen, NULL, &rtv1->rect); //Копируем в рендер фон
+	SDL_RenderCopy(rtv1->renderer, rtv1->ui_tex, NULL, &((SDL_Rect){CH, 0, 200, CH})); //Копируем в рендер фон
     SDL_RenderPresent(rtv1->renderer); //Погнали!!
 
 	if (!(rtv1->selected))

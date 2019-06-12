@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/12 17:20:43 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/12 22:47:09 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "minilibx/mlx.h"
 # include "libft/libft.h"
 # include "frameworks/SDL2.framework/Headers/SDL.h"
+# include "LIBUI.h"
 
 # define MAX_SOURCE_SIZE 40000
 # define CW 1000
@@ -113,12 +114,17 @@ typedef struct	s_scene
 
 typedef struct	s_rtv1
 {
+	SDL_Surface			*ui;
 	SDL_Surface			*surface;
 	SDL_Window			*window;
 	SDL_Renderer		*renderer;
 	SDL_Rect			rect;
 	SDL_Texture			*screen;
+	SDL_Texture			*ui_tex;
 	SDL_Event			event;
+
+	t_LIBUI_Button		buttons[10];
+	int					c_buttons;
 
 
 
@@ -133,6 +139,7 @@ typedef struct	s_rtv1
 
 
 	t_obj				*selected;
+
 	double				selected_t;
 	int					left_mouse_pressed;
 	int					right_mouse_pressed;

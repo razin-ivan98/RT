@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/12 17:01:59 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/12 22:43:09 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,11 @@ void		graphics_init(t_rtv1 *rtv1)
 	rtv1->guide_on = 0;
 	SDL_Init(SDL_INIT_VIDEO);
     rtv1->surface = SDL_CreateRGBSurface(0, CW, CH, 32, 0, 0, 0, 0);
-    rtv1->window = SDL_CreateWindow("Game", 200, 200, CW, CH, SDL_WINDOW_SHOWN);
+	rtv1->ui = SDL_CreateRGBSurface(0, 200, CH, 32, 0, 0, 0, 0);
+
+	SDL_FillRect(rtv1->ui, &((SDL_Rect){0, 0, 200, CH}), 0x00FFFF00);
+
+    rtv1->window = SDL_CreateWindow("Game", 200, 200, CW + 200, CH, SDL_WINDOW_SHOWN);
     rtv1->renderer = SDL_CreateRenderer(rtv1->window, -1, SDL_RENDERER_ACCELERATED);
 
     rtv1->rect.x = 0;
@@ -118,8 +122,9 @@ void		graphics_init(t_rtv1 *rtv1)
     rtv1->rect.w = CW;
     rtv1->rect.h = CH;
 
-
-
+	rtv1->c_buttons = 0;
+	LIBUI_NewButton((t_but_constr){20, 20, "New Sphere", "New Sphere", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
+	LIBUI_NewButton((t_but_constr){20, 60, "Delete Sphere", "Delete Sphere", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 
 	kernel_init(rtv1);
 }
