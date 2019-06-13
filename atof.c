@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:53:43 by chorange          #+#    #+#             */
-/*   Updated: 2019/04/12 11:15:42 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/13 20:43:17 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,3 +50,37 @@ double			ft_atof(char *str)
 	}
 	return (ret);
 }
+
+char			*ft_ftoa(double n)
+{
+	char *tmp;
+	char *ret;
+	int i;
+	int f;
+
+	ret = (char *)malloc(64);//////////////////////////
+	i = (int)n;
+	f = (int)((n - (double)((int)n)) * 1000.0) * (n < 0.0 ? -1.0 : 1.0);
+
+	tmp = ft_itoa(i);
+	if (!ft_strchr(tmp, '-') && n < 0.0)
+		ft_strcpy(tmp, "-0");
+	ft_strcpy(ret, tmp);
+	free(tmp);
+	
+
+	tmp = ft_itoa(f);
+	ft_strcat(ret, ".");
+	ft_strcat(ret, tmp);
+	free(tmp);
+	
+	return ret;
+}
+/*
+int main()
+{
+	char * ptr = ft_ftoa(-0.7);
+	puts(ptr);
+	free (ptr);
+	return 0;
+}*/

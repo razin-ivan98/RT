@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/12 22:47:09 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/13 21:29:13 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ typedef struct	s_rtv1
 	SDL_Texture			*ui_tex;
 	SDL_Event			event;
 
-	t_LIBUI_Button		buttons[10];
+	t_LIBUI_Button		buttons[30];
 	int					c_buttons;
 
 
@@ -136,7 +136,7 @@ typedef struct	s_rtv1
 
 
 
-
+	char				scene_file_name[128];
 
 	t_obj				*selected;
 
@@ -169,10 +169,15 @@ typedef struct	s_rtv1
 	cl_mem				memobj;
 
 	cl_mem				utils_memobj;
+
+	cl_mem				tex;
+
+	size_t				global_work_size;
 }				t_rtv1;
 
 void			read_scene(t_scene *scene, char *file_name);
 double			ft_atof(char *str);
+char			*ft_ftoa(double n);
 t_vector		read_vector(char *str);
 t_camera		*camera_init(char *line, t_camera *camera);
 t_light			*read_light_parameters(char *line, t_light **light);
@@ -209,5 +214,14 @@ int				clean_exit(t_rtv1 *rtv1);
 
 t_vector		rotate_view(t_vector point, double alpha, double beta);
 void			select_object(t_rtv1 *rtv1, int x, int y);
+
+
+void save(t_rtv1 *rtv1);
+
+
+
+t_vector rot(t_vector P, t_vector angles);
+
+
 
 #endif

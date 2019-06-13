@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/12 22:52:08 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/13 21:38:07 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,51 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
 				rtv1->scene.objs[rtv1->scene.c_objs].radius = 1.0;
 				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){255, 0, 0};
 				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
 
 				rtv1->scene.c_objs++;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Delete Sphere"))
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "New Cylinder"))
+			{
+				rtv1->scene.objs[rtv1->scene.c_objs].type = cylinder;
+				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 0.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].radius = 1.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){255, 0, 0};
+				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
+
+				rtv1->scene.c_objs++;
+			}
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "New Cone"))
+			{
+				rtv1->scene.objs[rtv1->scene.c_objs].type = cone;
+				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 0.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){255, 0, 0};
+				rtv1->scene.objs[rtv1->scene.c_objs].angle = 0.2;
+				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
+
+				rtv1->scene.c_objs++;
+			}
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "New Plane"))
+			{
+				rtv1->scene.objs[rtv1->scene.c_objs].type = plane;
+				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 0.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){255, 0, 0};
+				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
+
+				rtv1->scene.c_objs++;
+			}
+			
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Delete Object"))
 			{	
 				if (!rtv1->scene.c_objs)
 					return (0);
@@ -51,6 +91,47 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 
 				rtv1->scene.objs[selected_id] = rtv1->scene.objs[rtv1->scene.c_objs - 1];
 				rtv1->scene.c_objs--;
+			}
+
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Save Scene"))
+			{	
+				save(rtv1);
+			}
+
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Radius+"))
+			{	
+				rtv1->selected->radius += 0.1;
+			}
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Radius-") && rtv1->selected->radius > 0.1)
+			{	
+				rtv1->selected->radius -= 0.1;
+			}
+
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Angle+"))
+			{	
+				rtv1->selected->angle += 0.1;
+			}
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Angle-"))
+			{	
+				rtv1->selected->angle -= 0.1;
+			}
+
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Specular+"))
+			{	
+				rtv1->selected->specular += 20.0;
+			}
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Specular-") && rtv1->selected->specular > 0.0)
+			{	
+				rtv1->selected->specular -= 20.0;
+			}
+
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Reflective+") && rtv1->selected->reflective < 1.0)
+			{	
+				rtv1->selected->reflective += 0.1;
+			}
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Reflective-") && rtv1->selected->reflective > 0.0)
+			{	
+				rtv1->selected->reflective -= 0.1;
 			}
 		} 
 	}
@@ -114,9 +195,15 @@ int	mouse_move(int x, int y, t_rtv1 *rtv1)
 		dy = y - rtv1->prev_y;
 		if (!(rtv1->selected))
 			rtv1->selected = &(rtv1->scene.objs[0]);
-
-		rtv1->selected->rot.y -= 0.05 * dx;
-		rtv1->selected->rot.x += 0.05 * dy;
+		if (rtv1->selected->type == sphere)
+		{
+			rtv1->selected->rot.y -= 0.05 * dx;
+			rtv1->selected->rot.x += 0.05 * dy;
+		}
+		else
+		{
+			rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){-0.05 * dx, 0.5 * dy, 0.0}));
+		}
 	}
 	rtv1->prev_x = x;
 	rtv1->prev_y = y;

@@ -6,7 +6,7 @@
 #    By: chorange <chorange@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/18 18:53:25 by chorange          #+#    #+#              #
-#    Updated: 2019/06/12 21:57:32 by chorange         ###   ########.fr        #
+#    Updated: 2019/06/13 21:26:31 by chorange         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ FLAGS = -Wextra -Wall -Werror
 
 OBJECTS = main.o init.o vect_math1.o vect_math2.o color.o read_scene1.o atof.o\
 	get_next_line.o key_utils.o camera_dir_setup.o\
-	transform.o	intersect_objs.o exit.o read_scene2.o LIBUI.o
+	transform.o	intersect_objs.o exit.o read_scene2.o LIBUI.o save.o
 
 LIBS = -L./minilibx -lmlx -L./libft -lft -lm -framework OpenGL\
 	-framework AppKit -framework OpenCL -framework OpenGL

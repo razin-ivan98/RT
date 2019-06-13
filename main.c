@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/06/12 22:24:23 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/13 21:30:43 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,24 +31,6 @@ void	texture_load(void *mlx_ptr, char **data, char *file_name)
 */
 void		provider(t_rtv1 *rtv1)
 {
-	size_t global_work_size;
-
-	global_work_size = CW * CH;
-
-	SDL_Surface *texture;
-
-	texture = SDL_LoadBMP("brick.bmp");
-	//texture_load(rtv1->mlx_ptr, &data, "brick.xpm");///////////////////////////////
-
-
-	cl_mem tex = clCreateBuffer(rtv1->context, CL_MEM_READ_WRITE,
-		1024 * 1024 * 3, NULL, &rtv1->ret);
-	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
-			tex, CL_TRUE, 0,
-			1024 * 1024 * 3, (unsigned char *)texture->pixels, 0, NULL, NULL);
-	rtv1->ret = clSetKernelArg(rtv1->kernel, 2,
-			sizeof(cl_mem), (void *)&tex);
-
 
 
 
@@ -58,10 +40,9 @@ void		provider(t_rtv1 *rtv1)
 	rtv1->ret = clSetKernelArg(rtv1->kernel, 1,
 			sizeof(cl_mem), (void *)&rtv1->utils_memobj);
 	rtv1->ret = clEnqueueNDRangeKernel(rtv1->command_queue, rtv1->kernel, 1,
-			NULL, &global_work_size, NULL, 0, NULL, NULL);
+			NULL, &rtv1->global_work_size, NULL, 0, NULL, NULL);
 	rtv1->ret = clEnqueueReadBuffer(rtv1->command_queue, rtv1->memobj,
 			CL_TRUE, 0, CW * CH * 4, (void *)rtv1->surface->pixels, 0, NULL, NULL);
-	//mlx_put_image_to_window(rtv1->mlx_ptr, rtv1->win_ptr, rtv1->image, 0, 0);///////////////////////////////
 
 	rtv1->screen = SDL_CreateTextureFromSurface(rtv1->renderer, rtv1->surface);
 
@@ -77,7 +58,9 @@ void		provider(t_rtv1 *rtv1)
 	//SDL_FreeSurface(rtv1->surface);
 	SDL_RenderClear(rtv1->renderer); //Очистка рендера
     SDL_RenderCopy(rtv1->renderer, rtv1->screen, NULL, &rtv1->rect); //Копируем в рендер фон
-	SDL_RenderCopy(rtv1->renderer, rtv1->ui_tex, NULL, &((SDL_Rect){CH, 0, 200, CH})); //Копируем в рендер фон
+	SDL_RenderCopy(rtv1->renderer, rtv1->ui_tex, NULL, &((SDL_Rect){CH, 0, 400, CH})); //Копируем в рендер фон
+	SDL_DestroyTexture(rtv1->screen);
+	SDL_DestroyTexture(rtv1->ui_tex);
     SDL_RenderPresent(rtv1->renderer); //Погнали!!
 
 	if (!(rtv1->selected))
