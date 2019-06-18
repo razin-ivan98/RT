@@ -4,76 +4,97 @@ camera_init
 	direction = (0.0, 0.0, 1.0)
 }
 
-new light
-{
-	type = point
-	intensity = 0.6
-	position = (2.0, 0.1, 2.0)
-}
-
-new light
-{
-	type = point
-	intensity = 0.2
-	position = (-3.0, 0.0, 0.0)
-}
-
-new light
-{
-	type = ambient
-	intensity = 0.2
-}
-
 new object
 {
-	type = plane;
-	position = (0.0, -0.0, 10.0)
+	type = plane
+	position = (0.0, 0.0, 10.0)
 	direction = (0.0, 0.0, -1.0)
-	color = 65230
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 15209374
 	specular = 0.0
 	reflective = 0.0
+	angle = 0.0
+	texture-id = -1
 }
 
 new object
 {
 	type = plane
-	direction = (0.0, 1.0, 0.0)
 	position = (-1.0, -1.0, 0.0)
-	color = 255
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 2535365
 	specular = 0.0
 	reflective = 0.0
+	angle = 0.0
+	texture-id = -1
 }
 
 new object
 {
 	type = cone
-	angle = 0.5
-	direction = (-0.7, 1.5, 0.0)
-	position = (0.0, 0, 4.0)
+	position = (0.0, 0.0, 4.0)
+	direction = (-0.422, 0.906, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
 	color = 16776960
 	specular = 10.0
 	reflective = 0.0
+	angle = 0.500
+	texture-id = 0
 }
 
 new object
 {
 	type = cylinder
-	radius = 0.4
-	direction = (1.0, 1.0, 0.0)
-	position = (0, 1.0, 4.0)
+	position = (0.0, 1.0, 4.0)
+	direction = (0.707, 0.707, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.400
 	color = 6749952
 	specular = 0.0
 	reflective = 0.0
+	angle = 0.0
+	texture-id = 0
 }
 
 new object
 {
 	type = sphere
-	radius = 1
-	position = (0.4, 2.5, 4)
-	color = 16711680
+	position = (0.400, 2.500, 4.0)
+	direction = (0.0, 0.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 7488700
 	specular = 70.0
 	reflective = 0.0
+	angle = 0.0
+	texture-id = -1
 }
+
+new light
+{
+	type = point
+	intensity = 0.600
+	position = (2.0, 0.100, 2.0)
+	direction = (0.0, 0.0, 0.0)
+}
+new light
+{
+	type = point
+	intensity = 0.200
+	position = (-3.0, 0.0, 0.0)
+	direction = (0.0, 0.0, 0.0)
+}
+new light
+{
+	type = ambient
+	intensity = 0.200
+	position = (0.0, 0.0, 0.0)
+	direction = (0.0, 0.0, 0.0)
+}
+
 
 end

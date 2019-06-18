@@ -61,6 +61,8 @@ void save(t_rtv1 *rtv1)
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].reflective), fd);
         ft_putstr_fd("\n\tangle = ", fd);
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].angle), fd);
+        ft_putstr_fd("\n\ttexture-id = ", fd);
+        ft_putstr_fd(ft_itoa(rtv1->scene.objs[i].tex), fd);
         ft_putstr_fd("\n}\n\n", fd);
         i++;
     }

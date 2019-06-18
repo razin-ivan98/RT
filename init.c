@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/13 21:37:37 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/15 05:42:36 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,12 @@ static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
 		NULL, NULL, NULL);
 		printf("%d", rtv1->ret);
 
-	/*size_t l_size;
+	size_t l_size;
 	char *logg = NULL;
 		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &l_size);
 		logg = malloc(l_size);
 		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, l_size, logg, NULL);
-		puts(logg);*/
+		puts(logg);
 	free(source_str);
 }
 
@@ -93,32 +93,72 @@ static void	kernel_init(t_rtv1 *rtv1)
 
 	rtv1->global_work_size = CW * CH;
 
-	SDL_Surface *texture;
+	SDL_Surface *textures[5];
+	textures[0] = SDL_LoadBMP("tex1.bmp");
+	textures[1] = SDL_LoadBMP("tex2.bmp");
+	textures[2] = SDL_LoadBMP("tex3.bmp");
+	textures[3] = SDL_LoadBMP("tex4.bmp");
+	textures[4] = SDL_LoadBMP("tex5.bmp");
 
-	texture = SDL_LoadBMP("brick.bmp");
+	char *texes;
+	//texes = (char *)malloc(1024 * 1024 * 3 * 5 + 1);
+	/*
+	ft_strncpy(texes, textures[0]->pixels, 1024 * 1024 * 3);
+	ft_strlcat(texes, textures[1]->pixels, 1024 * 1024 * 3);
+	ft_strlcat(texes, textures[2]->pixels, 1024 * 1024 * 3);
+	ft_strlcat(texes, textures[3]->pixels, 1024 * 1024 * 3);
+	ft_strlcat(texes, textures[4]->pixels, 1024 * 1024 * 3);*/
+	
+
+	cl_mem tex2;
+	cl_mem tex3;
+	cl_mem tex4;
+	cl_mem tex5;
+
+
 	rtv1->tex = clCreateBuffer(rtv1->context, CL_MEM_READ_WRITE,
 		1024 * 1024 * 3, NULL, &rtv1->ret);
 	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
 			rtv1->tex, CL_TRUE, 0,
-			1024 * 1024 * 3, (unsigned char *)texture->pixels, 0, NULL, NULL);
+			1024 * 1024 * 3, (unsigned char *)textures[0]->pixels, 0, NULL, NULL);
 	rtv1->ret = clSetKernelArg(rtv1->kernel, 2,
+			sizeof(cl_mem), (void *)&rtv1->tex);
+
+	rtv1->tex = clCreateBuffer(rtv1->context, CL_MEM_READ_WRITE,
+		1024 * 1024 * 3, NULL, &rtv1->ret);
+	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
+			rtv1->tex, CL_TRUE, 0,
+			1024 * 1024 * 3, (unsigned char *)textures[1]->pixels, 0, NULL, NULL);
+	rtv1->ret = clSetKernelArg(rtv1->kernel, 3,
+			sizeof(cl_mem), (void *)&rtv1->tex);
+
+	rtv1->tex = clCreateBuffer(rtv1->context, CL_MEM_READ_WRITE,
+		1024 * 1024 * 3, NULL, &rtv1->ret);
+	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
+			rtv1->tex, CL_TRUE, 0,
+			1024 * 1024 * 3, (unsigned char *)textures[2]->pixels, 0, NULL, NULL);
+	rtv1->ret = clSetKernelArg(rtv1->kernel, 4,
+			sizeof(cl_mem), (void *)&rtv1->tex);
+
+	rtv1->tex = clCreateBuffer(rtv1->context, CL_MEM_READ_WRITE,
+		1024 * 1024 * 3, NULL, &rtv1->ret);
+	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
+			rtv1->tex, CL_TRUE, 0,
+			1024 * 1024 * 3, (unsigned char *)textures[3]->pixels, 0, NULL, NULL);
+	rtv1->ret = clSetKernelArg(rtv1->kernel, 5,
+			sizeof(cl_mem), (void *)&rtv1->tex);
+
+	rtv1->tex = clCreateBuffer(rtv1->context, CL_MEM_READ_WRITE,
+		1024 * 1024 * 3, NULL, &rtv1->ret);
+	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
+			rtv1->tex, CL_TRUE, 0,
+			1024 * 1024 * 3, (unsigned char *)textures[4]->pixels, 0, NULL, NULL);
+	rtv1->ret = clSetKernelArg(rtv1->kernel, 6,
 			sizeof(cl_mem), (void *)&rtv1->tex);
 }
 
 void		graphics_init(t_rtv1 *rtv1)
 {
-	/*int	bytes;
-	int	len;
-	int	endian;
-
-	bytes = 8;
-	len = CW;
-	endian = 0;
-	
-	rtv1->mlx_ptr = mlx_init();
-	rtv1->win_ptr = mlx_new_window(rtv1->mlx_ptr, CW, CH, "rtv1");
-	rtv1->image = mlx_new_image(rtv1->mlx_ptr, CW, CH);
-	rtv1->image_data = mlx_get_data_addr(rtv1->image, &bytes, &len, &endian);*/
 	rtv1->guide_on = 0;
 	SDL_Init(SDL_INIT_VIDEO);
     rtv1->surface = SDL_CreateRGBSurface(0, CW, CH, 32, 0, 0, 0, 0);
@@ -127,6 +167,8 @@ void		graphics_init(t_rtv1 *rtv1)
 	SDL_FillRect(rtv1->ui, &((SDL_Rect){0, 0, 400, CH}), 0x00FFFF00);
 
     rtv1->window = SDL_CreateWindow("Game", 400, 200, CW + 400, CH, SDL_WINDOW_SHOWN);
+	//SDL_Window *window = SDL_CreateWindow("Game", 400, 200, CW + 400, CH, SDL_WINDOW_SHOWN);
+	
     rtv1->renderer = SDL_CreateRenderer(rtv1->window, -1, SDL_RENDERER_ACCELERATED);
 
     rtv1->rect.x = 0;
@@ -161,6 +203,15 @@ void		graphics_init(t_rtv1 *rtv1)
     LIBUI_NewButton((t_but_constr){20, 400+170, "Reflective+", "Reflective+", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
     LIBUI_NewButton((t_but_constr){180, 400+170, "Reflective-", "Reflective-", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 
+	LIBUI_NewButton((t_but_constr){20, 400+300, "Edit", "Edit", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+
+
+	LIBUI_NewButton((t_but_constr){200, 400+300, "Texture1", "Texture1", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+	LIBUI_NewButton((t_but_constr){200, 400+350, "Texture2", "Texture2", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+	LIBUI_NewButton((t_but_constr){200, 400+400, "Texture3", "Texture3", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+	LIBUI_NewButton((t_but_constr){200, 400+450, "Texture4", "Texture4", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+	LIBUI_NewButton((t_but_constr){200, 400+500, "Texture5", "Texture5", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+	LIBUI_NewButton((t_but_constr){200, 400+550, "Rand Color", "Rand Color", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 
 	kernel_init(rtv1);
 }

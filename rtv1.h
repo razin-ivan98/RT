@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/13 21:29:13 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/15 04:30:59 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "libft/libft.h"
 # include "frameworks/SDL2.framework/Headers/SDL.h"
 # include "LIBUI.h"
+# include <pthread.h>
 
 # define MAX_SOURCE_SIZE 40000
 # define CW 1000
@@ -84,6 +85,7 @@ typedef struct	s_obj
 	t_rgb		rgb;
 	double		specular;
 	double		reflective;
+	int			tex;
 }				t_obj;
 
 typedef struct	s_light
@@ -222,6 +224,6 @@ void save(t_rtv1 *rtv1);
 
 t_vector rot(t_vector P, t_vector angles);
 
-
+//void *edit (t_rtv1 *rtv1);
 
 #endif

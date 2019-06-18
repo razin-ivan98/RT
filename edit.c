@@ -40,7 +40,7 @@ static int	mouse_release1(t_LIBUI_Button *buttons ,int c_buttons)
 }
 
 
-void edit (t_rtv1 *rtv1)
+void *edit (t_rtv1 *rtv1)
 {
     SDL_Surface *surface = SDL_CreateRGBSurface(0, 640, 480, 32, 0, 0, 0, 0);
     SDL_Window *window = SDL_CreateWindow("Properties", 200, 200, 640, 480, SDL_WINDOW_SHOWN);
@@ -88,7 +88,7 @@ void edit (t_rtv1 *rtv1)
             {
                 case SDL_QUIT: 
                     SDL_DestroyWindow(window);
-                    return;
+                    return(NULL);
                 case SDL_MOUSEBUTTONDOWN:
                     mouse_pressed1(ev.button.button, ev.button.x, ev.button.y, rtv1, buttons, c_buttons);
                     break;
