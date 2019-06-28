@@ -1,0 +1,7 @@
+.obj
+*.out
+**.o
+**.a
+**.dSYM
+.DS_Store
+.vscode

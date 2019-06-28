@@ -15,17 +15,56 @@ typedef struct s_but_constr
     int color;
 }               t_but_constr;
 
-typedef struct s_LIBUI_Button
+typedef struct s_list_constr
+{
+    int x;
+    int y;
+    char *text;
+    char *function;
+    int color;
+	char items_text[20][64];
+	char items_function[20][64];
+	int				c_items;
+}               t_list_constr;
+
+typedef struct  s_LIBUI_Button
 {
     int x;
     int y;
     SDL_Surface *surface;
     SDL_Surface *pressed;
-    char function[128];
+    char function[64];
     int is_pressed;
 }               t_LIBUI_Button;
 
+typedef struct		s_LIBUI_List
+{
+	int				x;
+	int				y;
+	/*int				width;
+	int				height;*/
+	/*int				start;
+	int				end;*/
+	/*int				item;
+	int				select_item;*/
+	/*char			function[128];*/
+	int				is_dropped;
+	/*int				expand;*/
+	/*void			(*ft_redraw)(void *rtv1);*/
+	/*SDL_Surface		*surface;
+	SDL_Surface		*pressed;*/
+
+	//t_LIBUI_Button	main;
+	t_LIBUI_Button	*items;
+	int				c_items;
+}					t_LIBUI_List;
+
+void		LIBUI_drop_list(void *rtv1, int x, int y);
 
     int LIBUI_IsButtonPressed(int x, int y, t_LIBUI_Button *buttons, int c_buttons);
     void LIBUI_NewButton(t_but_constr button, t_LIBUI_Button *buttons, int *c_buttons);
+
+	t_LIBUI_Button LIBUI_CreateButton(t_but_constr input);
+	void LIBUI_NewList(t_list_constr list, t_LIBUI_List *lists, int *c_lists);
+
 #endif

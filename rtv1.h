@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/15 04:30:59 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/28 21:17:31 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ typedef struct	s_scene
 
 typedef struct	s_rtv1
 {
+	SDL_Surface			*tmp;
 	SDL_Surface			*ui;
 	SDL_Surface			*surface;
 	SDL_Window			*window;
@@ -126,7 +127,9 @@ typedef struct	s_rtv1
 	SDL_Event			event;
 
 	t_LIBUI_Button		buttons[30];
+	t_LIBUI_List		lists[5];
 	int					c_buttons;
+	int					c_lists;
 
 
 

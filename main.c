@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/06/13 21:30:43 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/28 21:21:06 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,33 @@ void		provider(t_rtv1 *rtv1)
 
 	rtv1->screen = SDL_CreateTextureFromSurface(rtv1->renderer, rtv1->surface);
 
-
+	SDL_BlitSurface(rtv1->tmp, NULL, rtv1->ui, NULL);
 	int i = 0;
     while (i < rtv1->c_buttons)
     {
         SDL_BlitSurface((rtv1->buttons[i].is_pressed ? rtv1->buttons[i].pressed : rtv1->buttons[i].surface), &((SDL_Rect){-rtv1->buttons[i].x, -rtv1->buttons[i].y, rtv1->buttons[i].x + 100, rtv1->buttons[i].y + 30}), rtv1->ui, NULL);
         i++;
     }
+	i = 0;
+	while (i < rtv1->c_lists)
+	{
+		SDL_BlitSurface((rtv1->lists[i].items[0].is_pressed ? rtv1->lists[i].items[0].pressed : rtv1->lists[i].items[0].surface), &((SDL_Rect){-rtv1->lists[i].items[0].x, -rtv1->lists[i].items[0].y, rtv1->lists[i].items[0].x + 100, rtv1->lists[i].items[0].y + 30}), rtv1->ui, NULL);
+		
+		if (rtv1->lists[i].is_dropped)
+		{
+			//puts("lol");
+			int j = 1;
+			//printf("%d\n\n", rtv1->lists[i].c_items);
+			while (j < rtv1->lists[i].c_items)
+			{
+				//printf("%d\n", j);
+								//puts(rtv1->lists[i].items[j].function);
+				SDL_BlitSurface((rtv1->lists[i].items[j].is_pressed ? rtv1->lists[i].items[j].pressed : rtv1->lists[i].items[j].surface), &((SDL_Rect){-rtv1->lists[i].items[j].x, -rtv1->lists[i].items[j].y, rtv1->lists[i].items[j].x + 100, rtv1->lists[i].items[j].y + 30}), rtv1->ui, NULL);
+				j++;
+			}
+		}
+		i++;
+	}
 
 	rtv1->ui_tex = SDL_CreateTextureFromSurface(rtv1->renderer, rtv1->ui);
 	//SDL_FreeSurface(rtv1->surface);

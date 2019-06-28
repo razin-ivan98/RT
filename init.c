@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/15 05:42:36 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/28 21:28:39 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,12 @@ static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
 
 	size_t l_size;
 	char *logg = NULL;
-		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &l_size);
-		logg = malloc(l_size);
-		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, l_size, logg, NULL);
-		puts(logg);
-	free(source_str);
+		//clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &l_size);
+		//logg = malloc(l_size);
+		//clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, l_size, logg, NULL);
+		//puts(logg);
+	//free(logg);
+//	free(source_str);
 }
 
 static void	kernel_init(t_rtv1 *rtv1)
@@ -163,8 +164,9 @@ void		graphics_init(t_rtv1 *rtv1)
 	SDL_Init(SDL_INIT_VIDEO);
     rtv1->surface = SDL_CreateRGBSurface(0, CW, CH, 32, 0, 0, 0, 0);
 	rtv1->ui = SDL_CreateRGBSurface(0, 400, CH, 32, 0, 0, 0, 0);
+	rtv1->tmp = SDL_CreateRGBSurface(0, 400, CH, 32, 0, 0, 0, 0);
 
-	SDL_FillRect(rtv1->ui, &((SDL_Rect){0, 0, 400, CH}), 0x00FFFF00);
+	SDL_FillRect(rtv1->tmp, &((SDL_Rect){0, 0, 400, CH}), 0x00FFFF00);
 
     rtv1->window = SDL_CreateWindow("Game", 400, 200, CW + 400, CH, SDL_WINDOW_SHOWN);
 	//SDL_Window *window = SDL_CreateWindow("Game", 400, 200, CW + 400, CH, SDL_WINDOW_SHOWN);
@@ -212,6 +214,29 @@ void		graphics_init(t_rtv1 *rtv1)
 	LIBUI_NewButton((t_but_constr){200, 400+450, "Texture4", "Texture4", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 	LIBUI_NewButton((t_but_constr){200, 400+500, "Texture5", "Texture5", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 	LIBUI_NewButton((t_but_constr){200, 400+550, "Rand Color", "Rand Color", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+
+	//LIBUI_drop_list(rtv1, 200, 20);
+	t_list_constr tmp;
+
+	tmp.x = 200;
+	tmp.y = 20;
+	tmp.text = "Texture";
+	tmp.function = "lol";
+	tmp.color  = 0x000000ff;
+	tmp.c_items = 5;
+	ft_strcpy(tmp.items_text[0], "Texture1");
+	ft_strcpy(tmp.items_text[1], "Texture2");
+	ft_strcpy(tmp.items_text[2], "Texture3");
+	ft_strcpy(tmp.items_text[3], "Texture4");
+	ft_strcpy(tmp.items_text[4], "Texture5");
+
+	ft_strcpy(tmp.items_function[0], "Texture1");
+	ft_strcpy(tmp.items_function[1], "Texture2");
+	ft_strcpy(tmp.items_function[2], "Texture3");
+	ft_strcpy(tmp.items_function[3], "Texture4");
+	ft_strcpy(tmp.items_function[4], "Texture5");
+
+	LIBUI_NewList(tmp, rtv1->lists, &rtv1->c_lists);
 
 	kernel_init(rtv1);
 }

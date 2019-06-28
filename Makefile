@@ -16,7 +16,7 @@ FLAGS = #-Wextra -Wall -Werror
 
 OBJECTS = main.o init.o vect_math1.o vect_math2.o color.o read_scene1.o atof.o\
 	get_next_line.o key_utils.o camera_dir_setup.o\
-	transform.o	intersect_objs.o exit.o read_scene2.o LIBUI.o save.o
+	transform.o	intersect_objs.o exit.o read_scene2.o LIBUI.o save.o ft_drop_list.o
 
 LIBS = -L./minilibx -lmlx -L./libft -lft -lm -framework OpenGL\
 	-framework AppKit -framework OpenCL -framework OpenGL

@@ -6,15 +6,35 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/17 19:20:22 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/28 21:30:00 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
+int *list_utils(t_rtv1 *rtv1, int x, int y)
+{
+	int i;
+	int *ret;
+
+	i = 0;
+	ret = (int *)malloc(8);
+	ret[1] = -1;
+	while (i < rtv1->c_lists)
+	{
+		ret[0] = i;
+		ret[1] = LIBUI_IsButtonPressed(x - CH, y, rtv1->lists[i].items, rtv1->lists[i].c_items);
+		if (ret[1] != -1)
+			break;
+		i++;
+	}
+	return (ret);
+}
+
 int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 {
 	int pressed_button;
+	char func[64];
 	rtv1->prev_x = x;
 	rtv1->prev_y = y;
 	rtv1->selected_t = 9999999.9;
@@ -28,9 +48,26 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 		{
 			pressed_button = LIBUI_IsButtonPressed(x - CH, y, rtv1->buttons, rtv1->c_buttons);
 			if (pressed_button == -1)
-				return (0);
-			rtv1->buttons[pressed_button].is_pressed = 1;
-			if (!ft_strcmp(rtv1->buttons[pressed_button].function, "New Sphere"))
+			{
+				//return (0);
+				int *ret;
+				ret = list_utils(rtv1, x, y);
+				if (ret[1] == -1)
+					return(0);
+				else
+				{
+					ft_strcpy(func, rtv1->lists[ret[0]].items[ret[1]].function);
+					puts(func);
+				}
+				rtv1->lists[ret[0]].items[ret[1]].is_pressed = 1;
+				free(ret);
+			}
+			else
+			{
+				rtv1->buttons[pressed_button].is_pressed = 1;
+				ft_strcpy(func, rtv1->buttons[pressed_button].function);
+			}
+			if (!ft_strcmp(func, "New Sphere"))
 			{
 				rtv1->scene.objs[rtv1->scene.c_objs].type = sphere;
 				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
@@ -43,7 +80,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 
 				rtv1->scene.c_objs++;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "New Cylinder"))
+			else if (!ft_strcmp(func, "New Cylinder"))
 			{
 				rtv1->scene.objs[rtv1->scene.c_objs].type = cylinder;
 				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
@@ -57,7 +94,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 
 				rtv1->scene.c_objs++;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "New Cone"))
+			else if (!ft_strcmp(func, "New Cone"))
 			{
 				rtv1->scene.objs[rtv1->scene.c_objs].type = cone;
 				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
@@ -71,7 +108,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 
 				rtv1->scene.c_objs++;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "New Plane"))
+			else if (!ft_strcmp(func, "New Plane"))
 			{
 				rtv1->scene.objs[rtv1->scene.c_objs].type = plane;
 				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
@@ -84,7 +121,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 				rtv1->scene.c_objs++;
 			}
 			
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Delete Object"))
+			else if (!ft_strcmp(func, "Delete Object"))
 			{	
 				if (!rtv1->scene.c_objs)
 					return (0);
@@ -100,76 +137,89 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 					rtv1->selected = &rtv1->scene.objs[0];*/
 			}
 
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Save Scene"))
+			else if (!ft_strcmp(func, "Save Scene"))
 			{	
 				save(rtv1);
 			}
 
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Radius+"))
+			else if (!ft_strcmp(func, "Radius+"))
 			{	
 				rtv1->selected->radius += 0.1;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Radius-") && rtv1->selected->radius > 0.1)
+			else if (!ft_strcmp(func, "Radius-") && rtv1->selected->radius > 0.1)
 			{	
 				rtv1->selected->radius -= 0.1;
 			}
 
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Angle+"))
+			else if (!ft_strcmp(func, "Angle+"))
 			{	
 				rtv1->selected->angle += 0.1;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Angle-"))
+			else if (!ft_strcmp(func, "Angle-"))
 			{	
 				rtv1->selected->angle -= 0.1;
 			}
 
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Specular+"))
+			else if (!ft_strcmp(func, "Specular+"))
 			{	
 				rtv1->selected->specular += 20.0;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Specular-") && rtv1->selected->specular > 0.0)
+			else if (!ft_strcmp(func, "Specular-") && rtv1->selected->specular > 0.0)
 			{	
 				rtv1->selected->specular -= 20.0;
 			}
 
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Reflective+") && rtv1->selected->reflective < 1.0)
+			else if (!ft_strcmp(func, "Reflective+") && rtv1->selected->reflective < 1.0)
 			{	
 				rtv1->selected->reflective += 0.1;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Reflective-") && rtv1->selected->reflective > 0.0)
+			else if (!ft_strcmp(func, "Reflective-") && rtv1->selected->reflective > 0.0)
 			{	
 				rtv1->selected->reflective -= 0.1;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Texture1"))
+			else if (!ft_strcmp(func, "Texture1"))
 			{	
 				rtv1->selected->tex = 0;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Texture2"))
+			else if (!ft_strcmp(func, "Texture2"))
 			{	
 				rtv1->selected->tex = 1;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Texture3"))
+			else if (!ft_strcmp(func, "Texture3"))
 			{	
 				rtv1->selected->tex = 2;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Texture4"))
+			else if (!ft_strcmp(func, "Texture4"))
 			{	
 				rtv1->selected->tex = 3;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Texture5"))
+			else if (!ft_strcmp(func, "Texture5"))
 			{	
 				rtv1->selected->tex = 4;
 			}
-			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Rand Color"))
+			else if (!ft_strcmp(func, "Rand Color"))
 			{	
 				rtv1->selected->tex = -1;
 				rtv1->selected->rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
 			}
+		/*	else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Expand"))
+			{
+				rtv1->list->expand = rtv1->list->expand ? 0 : 1;
+				rtv1->list->ft_redraw(rtv1);
+			}*/
 		/*	else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Edit"))
 			{	
 				pthread_t thread;
 				pthread_create(&thread, NULL, edit, rtv1);
 			}*/
+			else if (!ft_strcmp(func, "lol"))
+			{
+				if (rtv1->lists[0].is_dropped == 1)
+					rtv1->lists[0].is_dropped = 0;
+				else
+					rtv1->lists[0].is_dropped = 1;
+				printf("\n%d\n\n", rtv1->lists[0].is_dropped);
+			}
 		} 
 	}
 	/*else if (button == 4)
@@ -198,6 +248,18 @@ int	mouse_release(int button, int x, int y, t_rtv1 *rtv1)
 		while (i < rtv1->c_buttons)
 		{
 			(rtv1->buttons)[i].is_pressed = 0;
+			i++;
+		}
+		i = 0;
+		while (i < rtv1->c_lists)
+		{
+			//rtv1->lists[i].is_dropped = 0;
+			int j = 0;
+			while (j < rtv1->lists[i].c_items)
+			{
+				(rtv1->lists)[i].items[j].is_pressed = 0;
+				j++;
+			}
 			i++;
 		}
 	}
