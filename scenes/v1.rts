@@ -6,45 +6,19 @@ camera_init
 
 new object
 {
-	type = cylinder
-	position = (-1.697, 0.853, 7.0)
-	direction = (-0.20, -0.719, -0.694)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 0.899
-	color = 12939844
-	specular = 20.0
-	reflective = 0.0
-	angle = 0.200
-	texture-id = 0
-}
-
-new object
-{
-	type = cone
-	position = (2.690, 0.541, 7.0)
-	direction = (-0.64, 0.558, -0.826)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 0.0
-	color = 12348792
-	specular = 20.0
-	reflective = 0.0
-	angle = 0.200
-	texture-id = 2
-}
-
-new object
-{
 	type = sphere
-	position = (0.379, 1.784, 7.0)
-	direction = (-0.694, 0.677, -0.240)
-	rotate = (-8.799, -4.250, 0.0)
+	position = (-1.764, 0.134, 7.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (1.350, -2.149, 0.0)
 	radius = 1.0
-	color = 15209374
+	color = 6696806
 	specular = 20.0
-	reflective = 0.500
-	angle = 0.0
-	texture-id = 2
+	reflective = 0.0
+	angle = 1.0
+	texture-id = -1
 }
+
+
 
 new light
 {

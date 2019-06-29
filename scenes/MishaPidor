@@ -1,0 +1,65 @@
+camera_init
+{
+	position = (0.0, 0.500, 0.0)
+	direction = (0.0, 0.0, 1.0)
+}
+
+new object
+{
+	type = cylinder
+	position = (-1.639, 0.415, 7.0)
+	direction = (-0.196, -0.705, -0.680)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.899
+	color = 12939844
+	specular = 20.0
+	reflective = 0.0
+	angle = 0.200
+	texture-id = 0
+}
+
+new object
+{
+	type = plane
+	position = (0.0, 0.0, 7.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	angle = 0.0
+	texture-id = -1
+}
+
+new object
+{
+	type = cone
+	position = (1.385, 1.134, 7.0)
+	direction = (-0.344, 0.574, 0.742)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	angle = 0.200
+	texture-id = 4
+}
+
+new light
+{
+	type = point
+	intensity = 0.800
+	position = (2.0, 1.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
+}
+new light
+{
+	type = ambient
+	intensity = 0.200
+	position = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
+}
+
+
+end

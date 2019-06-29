@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/06/28 21:21:06 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/29 13:27:37 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,12 @@ void		provider(t_rtv1 *rtv1)
     while (i < rtv1->c_buttons)
     {
         SDL_BlitSurface((rtv1->buttons[i].is_pressed ? rtv1->buttons[i].pressed : rtv1->buttons[i].surface), &((SDL_Rect){-rtv1->buttons[i].x, -rtv1->buttons[i].y, rtv1->buttons[i].x + 100, rtv1->buttons[i].y + 30}), rtv1->ui, NULL);
+        i++;
+    }
+	i = 0;
+	while (i < rtv1->c_edits)
+    {
+        SDL_BlitSurface((rtv1->active_edit == i ? rtv1->edits[i].with_text_active : rtv1->edits[i].with_text), &((SDL_Rect){-rtv1->edits[i].x, -rtv1->edits[i].y, rtv1->edits[i].x + 100, rtv1->edits[i].y + 30}), rtv1->ui, NULL);
         i++;
     }
 	i = 0;
@@ -102,6 +108,9 @@ void		provider(t_rtv1 *rtv1)
 			case SDL_KEYDOWN:
 				key_pressed(ev.key.keysym.sym, rtv1);
 				break;
+			case SDL_KEYUP:
+				key_release(ev.key.keysym.sym, rtv1);
+				break;
 			case SDL_MOUSEBUTTONDOWN:
 				mouse_pressed(ev.button.button, ev.button.x, ev.button.y, rtv1);
 				break;
@@ -123,8 +132,7 @@ int			main(int ac, char **av)
 
 	if (ac != 2)
 	{
-		ft_putendl("Argument is not valid. Please, set number of \
-scene in range from 1 to 8 as a argument");
+		ft_putendl("Argument is not valid.");
 		err_exit();
 	}
 	scene_init(&rtv1, av[1]);

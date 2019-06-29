@@ -1,10 +1,10 @@
 #include "rtv1.h"
 
-void save(t_rtv1 *rtv1)
+void save(t_rtv1 *rtv1, char *filename)
 {
     int fd;
 
-    fd = open(rtv1->scene_file_name, O_TRUNC | O_RDWR);
+    fd = open(filename, O_TRUNC | O_RDWR | O_CREAT ,  S_IRWXU | S_IRWXG | S_IRWXO);
 
     int i;
     i = 0;
@@ -99,4 +99,19 @@ void save(t_rtv1 *rtv1)
 
     close(fd);
 
+}
+
+void save_as(t_rtv1 *rtv1)
+{
+    char full_name[256];
+    char base_name[64];
+
+    ft_strcpy(base_name, rtv1->edits[LIBUI_GetEditWithFunction(rtv1->edits, rtv1->c_edits, "Name")].text);
+    if (ft_strlen(base_name))
+    {
+        ft_strcpy(full_name, "scenes/");
+        ft_strcat(full_name, base_name);
+        save(rtv1, full_name);
+        ft_strcpy(rtv1->scene_file_name, full_name);
+    }
 }

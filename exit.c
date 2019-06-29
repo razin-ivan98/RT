@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:59:00 by chorange          #+#    #+#             */
-/*   Updated: 2019/04/12 12:49:21 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/29 11:11:51 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int		clean_exit(t_rtv1 *rtv1)
 {
-	mlx_destroy_image(rtv1->mlx_ptr, rtv1->image);
+	
 	exit(-2);
 }
 

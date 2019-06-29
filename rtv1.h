@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/28 21:17:31 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/29 16:44:56 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@
 # include <fcntl.h>
 # include "get_next_line.h"
 # include <OpenCL/opencl.h>
-# include "minilibx/mlx.h"
 # include "libft/libft.h"
 # include "frameworks/SDL2.framework/Headers/SDL.h"
-# include "LIBUI.h"
+# include "LIBUI/LIBUI.h"
 # include <pthread.h>
 
 # define MAX_SOURCE_SIZE 40000
@@ -43,6 +42,8 @@ typedef enum	e_obj_type
 	cone,
 	cylinder,
 	plane,
+	torus,
+	paraboloid,
 	triangle
 }				t_obj_type;
 
@@ -53,6 +54,7 @@ typedef struct	s_vector
 	double z;
 
 }				t_vector;
+
 
 typedef struct	s_rgb
 {
@@ -128,18 +130,14 @@ typedef struct	s_rtv1
 
 	t_LIBUI_Button		buttons[30];
 	t_LIBUI_List		lists[5];
+	t_LIBUI_Edit		edits[5];
+	int					c_edits;
 	int					c_buttons;
 	int					c_lists;
+	int					active_edit;
+	int					dropped_list;
 
-
-
-
-	void				*mlx_ptr;
-	void				*win_ptr;
-	void				*image;
-	char				*image_data;
-
-
+	int					shift_pressed;
 
 	char				scene_file_name[128];
 
@@ -208,6 +206,7 @@ int				rgb_to_color(t_rgb rgb);
 
 int				mouse_pressed(int button, int x, int y, t_rtv1 *rtv1);
 int				key_pressed(int key, t_rtv1 *rtv1);
+int				key_release(int key, t_rtv1 *rtv1);
 int				mouse_release(int button, int x, int y, t_rtv1 *rtv1);
 int				mouse_move(int x, int y, t_rtv1 *rtv1);
 
@@ -221,7 +220,8 @@ t_vector		rotate_view(t_vector point, double alpha, double beta);
 void			select_object(t_rtv1 *rtv1, int x, int y);
 
 
-void save(t_rtv1 *rtv1);
+void save(t_rtv1 *rtv1, char *filename);
+void save_as(t_rtv1 *rtv1);
 
 
 

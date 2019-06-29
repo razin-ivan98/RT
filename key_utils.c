@@ -6,34 +6,24 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/28 21:30:00 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/29 16:42:55 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-int *list_utils(t_rtv1 *rtv1, int x, int y)
+t_list_item_addr list_utils(t_rtv1 *rtv1, int x, int y)
 {
-	int i;
-	int *ret;
+	t_list_item_addr ret;
 
-	i = 0;
-	ret = (int *)malloc(8);
-	ret[1] = -1;
-	while (i < rtv1->c_lists)
-	{
-		ret[0] = i;
-		ret[1] = LIBUI_IsButtonPressed(x - CH, y, rtv1->lists[i].items, rtv1->lists[i].c_items);
-		if (ret[1] != -1)
-			break;
-		i++;
-	}
-	return (ret);
+	ret = LIBUI_IsListPressed(x - CH, y, rtv1->lists, rtv1->c_lists);
+	return(ret);
 }
 
 int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 {
 	int pressed_button;
+	int edit_pressed;
 	char func[64];
 	rtv1->prev_x = x;
 	rtv1->prev_y = y;
@@ -49,22 +39,30 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 			pressed_button = LIBUI_IsButtonPressed(x - CH, y, rtv1->buttons, rtv1->c_buttons);
 			if (pressed_button == -1)
 			{
-				//return (0);
-				int *ret;
+				t_list_item_addr ret;
 				ret = list_utils(rtv1, x, y);
-				if (ret[1] == -1)
-					return(0);
+				if (ret.item == -1)
+				{
+					rtv1->active_edit = LIBUI_IsEditPressed(x - CH, y, rtv1->edits, rtv1->c_edits);
+
+					if (rtv1->active_edit == -1)
+					{
+						LIBUI_DisactiveAll(rtv1->edits, rtv1->c_edits, rtv1->lists, rtv1->c_lists);
+						return (0);
+					}
+				}
 				else
 				{
-					ft_strcpy(func, rtv1->lists[ret[0]].items[ret[1]].function);
-					puts(func);
+					rtv1->active_edit = -1;
+					ft_strcpy(func, rtv1->lists[ret.list].items[ret.item].function);
+					///puts(func);
 				}
-				rtv1->lists[ret[0]].items[ret[1]].is_pressed = 1;
-				free(ret);
+				rtv1->lists[ret.list].items[ret.item].is_pressed = 1;
 			}
 			else
 			{
-				rtv1->buttons[pressed_button].is_pressed = 1;
+				rtv1->active_edit = -1;
+				//rtv1->buttons[pressed_button].is_pressed = 1;
 				ft_strcpy(func, rtv1->buttons[pressed_button].function);
 			}
 			if (!ft_strcmp(func, "New Sphere"))
@@ -120,6 +118,34 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
 				rtv1->scene.c_objs++;
 			}
+			else if (!ft_strcmp(func, "New Triangle"))
+			{
+				rtv1->scene.objs[rtv1->scene.c_objs].type = triangle;
+				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){-1.0, 0.0, 7.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 6.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){1.0, 0.0, 7.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
+				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
+				rtv1->scene.objs[rtv1->scene.c_objs].angle = 2.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].radius = 0.5;
+				rtv1->scene.c_objs++;
+			}
+			else if (!ft_strcmp(func, "New Paraboloid"))
+			{
+				rtv1->scene.objs[rtv1->scene.c_objs].type = paraboloid;
+				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 0.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
+				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
+				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
+				rtv1->scene.objs[rtv1->scene.c_objs].angle = 1.0;
+				rtv1->scene.objs[rtv1->scene.c_objs].radius = 1.0;
+				rtv1->scene.c_objs++;
+			}
 			
 			else if (!ft_strcmp(func, "Delete Object"))
 			{	
@@ -139,7 +165,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 
 			else if (!ft_strcmp(func, "Save Scene"))
 			{	
-				save(rtv1);
+				save(rtv1, rtv1->scene_file_name);
 			}
 
 			else if (!ft_strcmp(func, "Radius+"))
@@ -202,6 +228,10 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 				rtv1->selected->tex = -1;
 				rtv1->selected->rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
 			}
+			else if (!ft_strcmp(func, "Save As"))
+			{
+				save_as(rtv1);
+			}
 		/*	else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Expand"))
 			{
 				rtv1->list->expand = rtv1->list->expand ? 0 : 1;
@@ -218,7 +248,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 					rtv1->lists[0].is_dropped = 0;
 				else
 					rtv1->lists[0].is_dropped = 1;
-				printf("\n%d\n\n", rtv1->lists[0].is_dropped);
+				//printf("\n%d\n\n", rtv1->lists[0].is_dropped);
 			}
 		} 
 	}
@@ -348,9 +378,11 @@ int	key_pressed(int key, t_rtv1 *rtv1)
 {
 	if (!(rtv1->selected))
 		rtv1->selected = &(rtv1->scene.objs[0]);
-
+	
 	if (key == SDLK_ESCAPE)
 		exit(1);
+	else if (rtv1->active_edit != -1)
+		LIBUI_InputLetter(key, rtv1->edits, rtv1->active_edit, rtv1->shift_pressed);
 	else if (key == SDLK_RIGHT)
 		rtv1->scene.camera.center.x += 0.5;
 	else if (key == SDLK_LEFT)
@@ -370,6 +402,15 @@ int	key_pressed(int key, t_rtv1 *rtv1)
 		else
 			rtv1->scene.shadows_on = 1;
 	}
+	if (key == 1073742049)
+		rtv1->shift_pressed = 1;
 	//provider(rtv1);
+	return (0);
+}
+
+int key_release(int key, t_rtv1 *rtv1)
+{
+	if (key == 1073742049)
+		rtv1->shift_pressed = 0;
 	return (0);
 }

@@ -6,6 +6,14 @@
 #define UPPER_BOUND 99999.9
 
 
+typedef struct			s_quad
+{
+	double a;
+	double b;
+	double c;
+	double d;
+	double res;
+}						t_quad;
 
 typedef enum
 {
@@ -20,6 +28,8 @@ typedef enum
 	cone,
 	cylinder,
 	plane,
+	torus,
+	paraboloid,
 	triangle
 }			obj_type;
 
@@ -231,6 +241,222 @@ double3	rotate_view(double3 point, double alpha, double beta)
 	return (point);
 }
 
+/////////////////////
+
+double ray_intersect_triangle(double3 start, double3 dir, t_cl_obj *triangle)
+{
+	double3 normal, x, v[3], c[3], hitpoint;
+	double d, t;
+
+
+
+	v[0] = triangle->dir - triangle->center;
+	v[1] = triangle->rot - triangle->dir;
+	v[2] = triangle->center - triangle->rot;
+	normal = normalize(cross(v[0], v[1]));
+	x = start - triangle->center;
+	if ((d = dot(dir,normal)) < 0.00001 && d > -0.00001)
+		return (0);
+	t = -dot(x, normal) / d;
+	hitpoint = t * dir + start;
+	c[0] = hitpoint - triangle->center;
+	c[1] = hitpoint - triangle->dir;
+	c[2] = hitpoint - triangle->rot;
+	if(length(cross(v[0],c[0]))+length(cross(v[1],c[1]))+length(cross(v[2],c[2])) < length(cross(v[1], v[2])) + 0.001)
+		return (t);
+	return (0);
+}
+/////////////////
+
+double ray_intersect_paraboloid(double3 start, double3 dir, t_cl_obj *parab)
+{
+	t_quad		q;
+	double3 	x, hitpoint;
+	double dist ,u , z, len;
+	double zeroThreshold = 0.0001;
+
+	x = start - parab->center;
+
+	u = dot(dir, parab->dir);
+	z = dot(x, parab->dir);
+
+	q.a = 2.f * (dot(dir, dir) - u * u);
+	q.b = 2.f * (dot(dir, x) - u * (z + 2.f *  parab->radius));
+	q.c = dot(x, x) - z * (z + 4.f *  parab->radius);
+	if ((q.d = q.b * q.b - 2.f * q.a * q.c) >= 0)
+	{
+		q.d = sqrt(q.d);
+		q.res = (-q.b - q.d) / q.a;
+		if (q.res > -zeroThreshold) {
+			hitpoint = q.res * dir + x;
+			len = dot(hitpoint, parab->dir);
+			if (len < parab->angle && len > -zeroThreshold)
+				return (q.res);
+		}
+		q.res = (-q.b + q.d) / q.a;
+		if (q.res > -zeroThreshold) {
+			hitpoint = q.res * dir + x;
+			len = dot(hitpoint, parab->dir);
+			if (len < parab->angle && len > -zeroThreshold)
+				return (q.res);
+		}
+	}
+	return (0);
+
+}
+
+///////////////
+int check_sphere(double3 start, double3 dir, double radius, double3 pos)
+{
+	t_quad		q;
+	double3 	x;
+	double zeroThreshold = 0.00001;
+
+	x = start - pos;
+	q.b = 2.0f * dot(dir, x);
+	q.c = dot(x, x) - radius * radius;
+	if ((q.d = (q.b * q.b - 4.0f * q.c)) < zeroThreshold)
+		return (0);
+	return (1);
+}
+void positive_discriminant(double Q, double2 koefs, double *solve, double b)
+{
+	double alpha, betha, ntmp;
+
+	ntmp = -koefs[1] / 3.f;
+		alpha = cbrt(-koefs[0] / 2.f + sqrt(Q));
+		betha = -koefs[1] / (3.f * alpha);
+		*solve = alpha + betha - b;
+}
+
+void negative_discriminant(double Q, double2 koefs, double *solve, double b)
+{
+	double cosphi, tmp, ntmp, phi;
+
+	tmp = -3.f / koefs.y;
+	ntmp = -koefs.y / 3.f;
+	cosphi = -koefs.x * 0.5f * sqrt(tmp * tmp * tmp);
+	phi = acos(cosphi);
+	*solve = 2.f * sqrt(ntmp) * cos(phi / 3.f) - b;
+}
+void fourth_degree_equation_solver(double4 koefs, double2 *solve)
+{
+	double3 ferrari_koefs, cubic_resol_koefs;
+	double2 cubic_two_params_koefs;
+	double a2, a3, a4, p2, b2, Q, cubic_solve;
+	t_quad q;
+
+	a2 = koefs[3] * koefs[3];
+	a3 = a2 * koefs[3];
+	a4 = a2 * a2;
+	//y4+py2+qy+r=0
+	ferrari_koefs[2] = koefs[2] - 0.375f * a2;
+	ferrari_koefs[1] = 0.125f * a3 - 0.5f * koefs[2] * koefs[3] + koefs[1];
+	ferrari_koefs[0] = (-0.01171875f) * a4 + 0.0625f * koefs[2] * a2 - 0.25f * koefs[1] * koefs[3] + koefs[0];
+	if (ferrari_koefs[1] * ferrari_koefs[1] < 1e-4)
+	{
+		q.b = ferrari_koefs[2];
+		q.c = ferrari_koefs[0];
+		q.d = q.b * q.b - 4.f * q.c + 1e-4;
+		if (q.d >= 0.f)
+		{
+			q.d = sqrt(q.d);
+			(*solve)[0] = (-q.b - q.d) / 2.f;
+			(*solve)[1] = (-q.b + q.d) / 2.f;
+			if ((*solve)[0] >= 0.f)
+				(*solve)[0] = (q.res = -sqrt((*solve)[0]) - koefs[3] / 4.f) > 0.f ? q.res : sqrt((*solve)[0]) - koefs[3] / 4.f;
+			if ((*solve)[1] >= 0.f)
+				(*solve)[1] = (q.res = -sqrt((*solve)[1]) - koefs[3] / 4.f) > 0.f ? q.res : sqrt((*solve)[1]) - koefs[3] / 4.f;
+		}
+		return;
+	}
+	//y3+py2+qy+r=0
+	cubic_resol_koefs[2] = (-0.5f) * ferrari_koefs[2];
+	cubic_resol_koefs[1] = -ferrari_koefs[0];
+	cubic_resol_koefs[0] = (-0.125f) * ferrari_koefs[1] * ferrari_koefs[1] + 0.5f * ferrari_koefs[0] * ferrari_koefs[2];
+	p2 = cubic_resol_koefs[2] * cubic_resol_koefs[2];
+	//y3+py+q=0
+	cubic_two_params_koefs[1] = cubic_resol_koefs[1] - p2 / 3.f;
+	cubic_two_params_koefs[0] = cubic_resol_koefs[0] + 2.f * p2  * cubic_resol_koefs[2] / 27.f - cubic_resol_koefs[2] * cubic_resol_koefs[1] / 3.f;
+	//y = z+t, 3zt+p = 0
+	b2 = cubic_two_params_koefs[0] * cubic_two_params_koefs[0];
+	Q = cubic_two_params_koefs[1] * cubic_two_params_koefs[1] * cubic_two_params_koefs[1] / 27.f + cubic_two_params_koefs[0] * cubic_two_params_koefs[0] / 4.f;
+	if (Q > 0)
+		positive_discriminant(Q, cubic_two_params_koefs, &cubic_solve, cubic_resol_koefs[2] / 3.f);
+	else
+		negative_discriminant(Q, cubic_two_params_koefs, &cubic_solve, cubic_resol_koefs[2] / 3.f);
+	if ((q.b = 2.f * cubic_solve - ferrari_koefs[2]) > 0.f ) {
+		q.a = q.b;
+		q.b = -sqrt(q.b);
+		q.c = ferrari_koefs[1] / (-2.f * q.b) + cubic_solve;
+		q.d = q.a - 4.f * q.c + 1e-4;
+		if (q.d >= 0.f)
+		{
+			q.d = sqrt(q.d);
+			(*solve)[0] =
+					(q.res = (-q.b - q.d) / 2.f - koefs[3] / 4.f) > 0.f
+					? q.res : (-q.b + q.d) / 2.f - koefs[3] / 4.f;
+		}
+		q.b = -q.b;
+		q.c = ferrari_koefs[1] / (-2.f * q.b) + cubic_solve;
+		q.d = q.a - 4.f * q.c + 1e-4;
+		if (q.d >= 0.f)
+		{
+			q.d = sqrt(q.d);
+			(*solve)[1] =
+					(q.res = (-q.b - q.d) / 2.f - koefs[3] / 4.f) > 0.f
+					? q.res : (-q.b + q.d) / 2.f - koefs[3] / 4.f;
+		}
+	}
+}
+
+double ray_intersect_torus(double3 start, double3 dir, t_cl_obj *torus)
+{
+	double3    x;
+	double4 equation_koefs, dots,qq;
+	double2 solve = (double2){-1.f, -1.f};
+	double R2, r2, Rr, dist;
+
+	Rr = torus->angle + torus->radius + 1;
+	if (!check_sphere(start, dir, Rr, torus->center))
+		return (0);
+	x = start - torus->center;
+	dist = length(x) - Rr;
+	if (dist > 0.f)
+		x += dir * dist;
+	else
+		dist = 0.f;
+	R2 = torus->angle * torus->angle;
+	r2 = torus->radius * torus->radius;
+	//ax4+bx3+cx2+dx1+e
+	//a == 1
+	dots[0] = dot(x, torus->dir);
+	dots[1] = dot(dir, torus->dir);
+	dots[2] = dot(x, x);
+	dots[3] = dot(x, dir);
+	qq[0] = 1.0f - dots[1] * dots[1];
+	qq[1] = 2.0f * (dots[3] - dots[0] * dots[1]);
+	qq[2] = dots[2] - dots[0] * dots[0];
+	qq[3] = dots[2] + R2 - r2;
+	equation_koefs[3] = 4.0f * dots[3];
+	equation_koefs[2] = 2.0f * qq[3] + equation_koefs[3] * equation_koefs[3] * 0.25f - 4.0f * R2 * qq[0];
+	equation_koefs[1] = equation_koefs[3] * qq[3] - 4.0f * R2 * qq[1];
+	equation_koefs[0] = qq[3] * qq[3] - 4.0f * R2 * qq[2];
+	fourth_degree_equation_solver(equation_koefs, &solve);
+
+	if(solve[0] > -0.00001)
+	{
+		if(solve[1] > 0)
+			return (solve[0] < solve[1] ? solve[0] + dist : solve[1] + dist);
+		else
+			return (solve[0] + dist);
+	}
+	else if (solve[1] > -0.00001)
+		return (solve[1] + dist);
+	else
+		return(0);
+}
+///////////////////
 double ray_intersect_plane(double3 start, double3 dir, t_cl_obj *plane)
 {
 	double zeroThreshold = 0.0001;
@@ -332,6 +558,12 @@ double ray_intersect_obj(double3 start, double3 dir, t_cl_obj *obj)
 		return (ray_intersect_cylinder(start, dir, obj));
 	else if (obj->type == plane)
 		return (ray_intersect_plane(start, dir, obj));
+	else if (obj->type == torus)
+		return (ray_intersect_torus(start, dir, obj));
+	else if (obj->type == paraboloid)
+		return (ray_intersect_paraboloid(start, dir, obj));
+	else if (obj->type == triangle)
+		return (ray_intersect_triangle(start, dir, obj));
 }
 
 t_cl_obj *get_closest_object(double *closest_t, double3 start, double3 dir, t_cl_scene *cl_scene)
@@ -390,6 +622,23 @@ double3 get_normal(double3 point, t_cl_obj obj)
 		project = project * k;
 		normal = normalize(normal - project);
 	}
+	else if (obj.type == torus)
+	{
+
+		point -= obj.center;
+		normal = point - dot(point, obj.dir) * obj.dir;
+		normal = normalize(normal);
+		normal = point - normal * obj.angle;
+		normal =  (normalize(normal));
+	}
+
+	else if (obj.type = paraboloid)
+	{
+		point = point - obj.center;
+		k = dot(point, obj.dir);
+		normal = point - obj.dir * (k + obj.radius);
+		normal = normalize(normal);
+	}
 	return (normal);
 }
 
@@ -425,7 +674,7 @@ double compute_lighting(double3 P, double3 N, double3 V, double s, t_cl_scene *c
 				while (j < cl_scene->c_objs)
 				{
 					t = ray_intersect_obj(P, L, &(cl_scene->objs[j]));
-					if (t > 0.0001 && ((cl_scene->lights[i].type == point && length(L) > length(L * t)) || (cl_scene->lights[i].type != point)))
+					if (t > 0.000001 && ((cl_scene->lights[i].type == point && length(L) > length(L * t)) || (cl_scene->lights[i].type != point)))
 					{
 						shadow_t = t;
 						shadow_obj = &(cl_scene->objs[j]);
@@ -436,14 +685,14 @@ double compute_lighting(double3 P, double3 N, double3 V, double s, t_cl_scene *c
 					continue ;
 			}
 			double n_dot_l = dot(N, L);
-			if (n_dot_l > 0.0)
+			if (n_dot_l > -0.0)
 				intensity += cl_scene->lights[i].intensity * n_dot_l / (/*1.0/*length(N) */ length(L));
 
 			if (s > 0.0)
 			{
 				double3 R = reflect_ray(L, N);
 				double r_dot_v = dot(R, V);
-				if (r_dot_v > 0.0)
+				if (r_dot_v > -0.0)
 					*spec_intensity += cl_scene->lights[i].intensity * pow(r_dot_v / (length(R) * length(V)), s);
 			}
 		}

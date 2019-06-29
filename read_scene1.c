@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:55:19 by chorange          #+#    #+#             */
-/*   Updated: 2019/04/12 13:15:37 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/29 14:06:58 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void			read_scene(t_scene *scene, char *file_name)
 	int		fd;
 	char	*line;
 
-	if (!(fd = open(file_name, O_RDONLY)))
+	if ((fd = open(file_name, O_RDONLY)) < 0)
 		err_exit();
 	while ((ret = get_next_line(fd, &line)))
 	{

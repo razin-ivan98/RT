@@ -6,36 +6,17 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/28 21:28:39 by chorange         ###   ########.fr       */
+/*   Updated: 2019/06/29 16:33:17 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-void		scene_init(t_rtv1 *rtv1, char *number)
+void		scene_init(t_rtv1 *rtv1, char *name)
 {
 
-	if (!ft_strcmp(number, "1"))
-		ft_strcpy(rtv1->scene_file_name, "scenes/v1.rts");
-	else if (!ft_strcmp(number, "2"))
-		ft_strcpy(rtv1->scene_file_name, "scenes/v2.rts");
-	else if (!ft_strcmp(number, "3"))
-		ft_strcpy(rtv1->scene_file_name, "scenes/v3.rts");
-	else if (!ft_strcmp(number, "4"))
-		ft_strcpy(rtv1->scene_file_name, "scenes/v4.rts");
-	else if (!ft_strcmp(number, "5"))
-		ft_strcpy(rtv1->scene_file_name, "scenes/v5.rts");
-	else if (!ft_strcmp(number, "6"))
-		ft_strcpy(rtv1->scene_file_name, "scenes/v6.rts");
-	else if (!ft_strcmp(number, "7"))
-		ft_strcpy(rtv1->scene_file_name, "scenes/v7.rts");
-	else if (!ft_strcmp(number, "8"))
-		ft_strcpy(rtv1->scene_file_name, "scenes/v8.rts");
-	else
-	{
-		ft_putendl(ERR);
-		err_exit();
-	}
+	ft_strcpy(rtv1->scene_file_name, name);
+	
 	rtv1->scene.shadows_on = 1;
 	read_scene(&(rtv1->scene), rtv1->scene_file_name);
 }
@@ -63,11 +44,11 @@ static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
 
 	size_t l_size;
 	char *logg = NULL;
-		//clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &l_size);
-		//logg = malloc(l_size);
-		//clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, l_size, logg, NULL);
-		//puts(logg);
-	//free(logg);
+		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &l_size);
+		logg = malloc(l_size);
+		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, l_size, logg, NULL);
+		puts(logg);
+	free(logg);
 //	free(source_str);
 }
 
@@ -161,6 +142,9 @@ static void	kernel_init(t_rtv1 *rtv1)
 void		graphics_init(t_rtv1 *rtv1)
 {
 	rtv1->guide_on = 0;
+	rtv1->shift_pressed = 0;
+	rtv1->dropped_list = -1;
+	rtv1->active_edit = -1;
 	SDL_Init(SDL_INIT_VIDEO);
     rtv1->surface = SDL_CreateRGBSurface(0, CW, CH, 32, 0, 0, 0, 0);
 	rtv1->ui = SDL_CreateRGBSurface(0, 400, CH, 32, 0, 0, 0, 0);
@@ -179,16 +163,20 @@ void		graphics_init(t_rtv1 *rtv1)
     rtv1->rect.h = CH;
 
 	rtv1->c_buttons = 0;
+	rtv1->c_edits = 0;
+	rtv1->c_lists = 0;
 	LIBUI_NewButton((t_but_constr){20, 20, "New Sphere", "New Sphere", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 	LIBUI_NewButton((t_but_constr){20, 60, "New Cylinder", "New Cylinder", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 	LIBUI_NewButton((t_but_constr){20, 100, "New Cone", "New Cone", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 	LIBUI_NewButton((t_but_constr){20, 140, "New Plane", "New Plane", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
+	LIBUI_NewButton((t_but_constr){20, 180, "New Triangle", "New Triangle", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
+	LIBUI_NewButton((t_but_constr){20, 220, "New Paraboloid", "New Paraboloid", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 
 	
 
-	LIBUI_NewButton((t_but_constr){20, 240, "Delete Object", "Delete Object", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
+	LIBUI_NewButton((t_but_constr){20, 280, "Delete Object", "Delete Object", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 	
-	LIBUI_NewButton((t_but_constr){20, 300, "Save Scene", "Save Scene", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
+	LIBUI_NewButton((t_but_constr){20, 340, "Save Scene", "Save Scene", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 
 
 
@@ -237,6 +225,9 @@ void		graphics_init(t_rtv1 *rtv1)
 	ft_strcpy(tmp.items_function[4], "Texture5");
 
 	LIBUI_NewList(tmp, rtv1->lists, &rtv1->c_lists);
+
+	LIBUI_NewEdit((t_edit_constr){200, 240, "Name", "Name", 0x00550000}, rtv1->edits, &rtv1->c_edits);
+	LIBUI_NewButton((t_but_constr){200, 300, "Save As", "Save As", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 
 	kernel_init(rtv1);
 }
