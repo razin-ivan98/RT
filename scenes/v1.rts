@@ -7,7 +7,7 @@ camera_init
 new object
 {
 	type = sphere
-	position = (-1.764, 0.134, 7.0)
+	position = (-0.287, -0.226, 7.0)
 	direction = (0.0, 1.0, 0.0)
 	rotate = (1.350, -2.149, 0.0)
 	radius = 1.0
@@ -18,7 +18,19 @@ new object
 	texture-id = -1
 }
 
-
+new object
+{
+	type = sphere
+	position = (2.87, 0.815, 7.0)
+	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	angle = 0.0
+	texture-id = -1
+}
 
 new light
 {

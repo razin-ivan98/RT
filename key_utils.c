@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/29 16:42:55 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/01 18:57:16 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,10 +198,14 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 			else if (!ft_strcmp(func, "Reflective+") && rtv1->selected->reflective < 1.0)
 			{	
 				rtv1->selected->reflective += 0.1;
+				if (rtv1->selected->reflective > 1.0)
+					rtv1->selected->reflective = 1.0;
 			}
-			else if (!ft_strcmp(func, "Reflective-") && rtv1->selected->reflective > 0.0)
+			else if (!ft_strcmp(func, "Reflective-"))
 			{	
 				rtv1->selected->reflective -= 0.1;
+				if (rtv1->selected->reflective < 0.0)
+					rtv1->selected->reflective = 0.0;
 			}
 			else if (!ft_strcmp(func, "Texture1"))
 			{	

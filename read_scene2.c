@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:58:18 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/15 05:22:58 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/01 19:24:16 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ t_obj		*read_obj_parameters(char *line, t_obj **obj)
 		(*obj)->specular = ft_atof(ft_strchr(line, '=') + 1);
 	else if (ft_strstr(line, "reflective"))
 		(*obj)->reflective = ft_atof(ft_strchr(line, '=') + 1);
+	else if (ft_strstr(line, "transparency"))
+		(*obj)->transparency = ft_atof(ft_strchr(line, '=') + 1);
 	else if (ft_strstr(line, "texture-id"))
 		(*obj)->tex = ft_atoi(ft_strchr(line, '=') + 1);
 	return (*obj);

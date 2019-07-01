@@ -59,7 +59,6 @@ typedef struct s_obj
 	t_rgb rgb;
 	double specular;
 	double reflective;
-	double transparency;
 	int tex;
 	//struct s_obj *next;
 }		t_obj;
@@ -103,7 +102,6 @@ typedef struct s_cl_obj
 	t_rgb rgb;
 	double specular;
 	double reflective;
-	double transparency;
 	int tex;
 
 	double3 center;
@@ -634,7 +632,7 @@ double3 get_normal(double3 point, t_cl_obj obj)
 		normal =  (normalize(normal));
 	}
 
-	else if (obj.type == paraboloid)
+	else if (obj.type = paraboloid)
 	{
 		point = point - obj.center;
 		k = dot(point, obj.dir);
@@ -1081,121 +1079,305 @@ t_rgb get_rgb_from_texture(double3 P, t_cl_obj obj, __global char* data[5])
 	return (obj.rgb);
 }
 
-inline void recalc_rgb(t_rgb *ret, t_rgb *colorr, double intensity, double spec_intensity, double coeff, double areflective)
-{
-	if ((colorr->r *= intensity) >= 255.0)
-		colorr->r = 255.0;
-	if ((colorr->g *= intensity) >= 255.0)
-		colorr->g = 255.0;
-	if ((colorr->b *= intensity) >= 255.0)
-		colorr->b = 255.0;
 
-	if ((colorr->r += 255.0 * spec_intensity) >= 255.0)
-		colorr->r = 255.0;
-	if ((colorr->g += 255.0 * spec_intensity) >= 255.0)
-		colorr->g = 255.0;
-	if ((colorr->b += 255.0 * spec_intensity) >= 255.0)
-		colorr->b = 255.0;
-
-	ret->r += (colorr->r * coeff * areflective);
-	ret->g += (colorr->g * coeff * areflective);
-	ret->b += (colorr->b * coeff * areflective);
-
-}
-
-t_rgb refr1(t_cl_obj *obj, t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
+int reflect5(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
 {
 	t_cl_obj closest_obj;
 	t_cl_obj *ptr;
-	double3 N;
 	double closest_t = 99999.0;
 	double intensity;
-	double spec_intensity;
-	double coeff = 1.0;
-	t_rgb colorr;
-	t_rgb ret = (t_rgb){0, 0, 0};
-	ptr = 0;
+	double spec_intensity = 0.0;
 	ptr = get_closest_object(&closest_t, start, dir, cl_scene);
-	if (ptr == obj)
+
+	if (ptr)
 	{
-		start =  start + dir * closest_t;
+		closest_obj = *ptr;
+
+		double3 P = start + dir * closest_t;
+
+		t_rgb colorr = get_rgb_from_texture(P, closest_obj, data);
+
+		double3 N = get_normal(P, closest_obj);
+
+		intensity = compute_lighting(P, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
+
+		if ((colorr.r *= intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g *= intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b *= intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if ((colorr.r += 255.0 * spec_intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g += 255.0 * spec_intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b += 255.0 * spec_intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		return (rgb_to_color(colorr));
 	}
-	
-		while (depth >= 0)
-		{
-			ptr = 0;
-			closest_t = 99999.0;
-			spec_intensity = 0.0;
-			ptr = get_closest_object(&closest_t, start, dir, cl_scene);
-			if (ptr == 0)
-				break;//////////////////////отражается ничто
+	return(0x000000);
+}
 
-			closest_obj = *ptr;
+int reflect4(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
+{
+	t_cl_obj closest_obj;
+	t_cl_obj *ptr;
+	double closest_t = 99999.0;
+	double intensity;
+	double spec_intensity = 0.0;
+	ptr = get_closest_object(&closest_t, start, dir, cl_scene);
 
-			start = start + dir * closest_t;
+	if (ptr)
+	{
+		closest_obj = *ptr;
 
-			colorr = get_rgb_from_texture(start, closest_obj, data);
-			//return (rgb_to_color(colorr));
-			N = get_normal(start, closest_obj);
+		double3 P = start + dir * closest_t;
 
-			intensity = compute_lighting(start, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
-			recalc_rgb(&ret, &colorr, intensity, spec_intensity, coeff, 1.0 - closest_obj.reflective);
-			coeff *= closest_obj.reflective;
-			/*if (closest_obj.reflective > 0.0)
-			{
-				double3 refr = normalize(start + start);
-				
-			}*/
-			depth--;
-			if (closest_obj.reflective <= 0.0)
-				break;
-			dir = reflect_ray((-1.0) * dir, N);
-		}
-	return (ret);
+		t_rgb colorr = get_rgb_from_texture(P, closest_obj, data);
+
+		double3 N = get_normal(P, closest_obj);
+
+		intensity = compute_lighting(P, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
+
+		if ((colorr.r *= intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g *= intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b *= intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if ((colorr.r += 255.0 * spec_intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g += 255.0 * spec_intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b += 255.0 * spec_intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if (depth <= 0 || closest_obj.reflective <= 0)
+			return (rgb_to_color(colorr));
+
+		double3 R = reflect_ray((-1.0) * dir, N);
+
+		t_rgb reflected = color_to_rgb(reflect5(cl_scene, P, R, depth - 1, data));
+		if ((colorr.r = colorr.r * (1 - closest_obj.reflective) + reflected.r * closest_obj.reflective) > 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g = colorr.g * (1 - closest_obj.reflective) + reflected.g * closest_obj.reflective) > 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b = colorr.b * (1 - closest_obj.reflective) + reflected.b * closest_obj.reflective) > 255.0)
+			colorr.b = 255.0;
+		return (rgb_to_color(colorr));
+	}
+	return(0x000000);
+}
+
+int reflect3(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
+{
+	t_cl_obj closest_obj;
+	t_cl_obj *ptr;
+	double closest_t = 99999.0;
+	double intensity;
+	double spec_intensity = 0.0;
+	ptr = get_closest_object(&closest_t, start, dir, cl_scene);
+
+	if (ptr)
+	{
+		closest_obj = *ptr;
+
+		double3 P = start + dir * closest_t;
+
+		t_rgb colorr = get_rgb_from_texture(P, closest_obj, data);
+
+		double3 N = get_normal(P, closest_obj);
+
+		intensity = compute_lighting(P, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
+
+		if ((colorr.r *= intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g *= intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b *= intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if ((colorr.r += 255.0 * spec_intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g += 255.0 * spec_intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b += 255.0 * spec_intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if (depth <= 0 || closest_obj.reflective <= 0)
+			return (rgb_to_color(colorr));
+
+		double3 R = reflect_ray((-1.0) * dir, N);
+
+		t_rgb reflected = color_to_rgb(reflect4(cl_scene, P, R, depth - 1, data));
+		if ((colorr.r = colorr.r * (1 - closest_obj.reflective) + reflected.r * closest_obj.reflective) > 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g = colorr.g * (1 - closest_obj.reflective) + reflected.g * closest_obj.reflective) > 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b = colorr.b * (1 - closest_obj.reflective) + reflected.b * closest_obj.reflective) > 255.0)
+			colorr.b = 255.0;
+		return (rgb_to_color(colorr));
+	}
+	return(0x000000);
+}
+
+int reflect2(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
+{
+	t_cl_obj closest_obj;
+	t_cl_obj *ptr;
+	double closest_t = 99999.0;
+	double intensity;
+	double spec_intensity = 0.0;
+	ptr = get_closest_object(&closest_t, start, dir, cl_scene);
+
+	if (ptr)
+	{
+		closest_obj = *ptr;
+
+		double3 P = start + dir * closest_t;
+
+		t_rgb colorr = get_rgb_from_texture(P, closest_obj, data);
+
+		double3 N = get_normal(P, closest_obj);
+
+		intensity = compute_lighting(P, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
+
+		if ((colorr.r *= intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g *= intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b *= intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if ((colorr.r += 255.0 * spec_intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g += 255.0 * spec_intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b += 255.0 * spec_intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if (depth <= 0 || closest_obj.reflective <= 0)
+			return (rgb_to_color(colorr));
+
+		double3 R = reflect_ray((-1.0) * dir, N);
+
+		t_rgb reflected = color_to_rgb(reflect3(cl_scene, P, R, depth - 1, data));
+		if ((colorr.r = colorr.r * (1 - closest_obj.reflective) + reflected.r * closest_obj.reflective) > 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g = colorr.g * (1 - closest_obj.reflective) + reflected.g * closest_obj.reflective) > 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b = colorr.b * (1 - closest_obj.reflective) + reflected.b * closest_obj.reflective) > 255.0)
+			colorr.b = 255.0;
+		return (rgb_to_color(colorr));
+	}
+	return(0x000000);
+}
+
+int reflect1(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
+{
+	t_cl_obj closest_obj;
+	t_cl_obj *ptr;
+	double closest_t = 99999.0;
+	double intensity;
+	double spec_intensity = 0.0;
+	ptr = get_closest_object(&closest_t, start, dir, cl_scene);
+
+	if (ptr)
+	{
+		closest_obj = *ptr;
+
+		double3 P = start + dir * closest_t;
+
+		t_rgb colorr = get_rgb_from_texture(P, closest_obj, data);
+
+		double3 N = get_normal(P, closest_obj);
+
+		intensity = compute_lighting(P, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
+
+		if ((colorr.r *= intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g *= intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b *= intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if ((colorr.r += 255.0 * spec_intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g += 255.0 * spec_intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b += 255.0 * spec_intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if (depth <= 0 || closest_obj.reflective <= 0)
+			return (rgb_to_color(colorr));
+
+		double3 R = reflect_ray((-1.0) * dir, N);
+
+		t_rgb reflected = color_to_rgb(reflect2(cl_scene, P, R, depth - 1, data));
+		if ((colorr.r = colorr.r * (1 - closest_obj.reflective) + reflected.r * closest_obj.reflective) > 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g = colorr.g * (1 - closest_obj.reflective) + reflected.g * closest_obj.reflective) > 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b = colorr.b * (1 - closest_obj.reflective) + reflected.b * closest_obj.reflective) > 255.0)
+			colorr.b = 255.0;
+		return (rgb_to_color(colorr));
+	}
+	return(0x000000);
 }
 
 int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
 {
 	t_cl_obj closest_obj;
 	t_cl_obj *ptr;
-	double3 N;
-	double closest_t;
+	double closest_t = 99999.0;
 	double intensity;
-	double spec_intensity;
-	double coeff = 1.0;
-	t_rgb colorr;
-	t_rgb ret = (t_rgb){0, 0, 0};
-		while (depth >= 0)
-		{
-			ptr = 0;
-			closest_t = 99999.0;
-			spec_intensity = 0.0;
-			ptr = get_closest_object(&closest_t, start, dir, cl_scene);
-			if (ptr == 0)
-				break;//////////////////////отражается ничто
+	double spec_intensity = 0.0;
+	ptr = get_closest_object(&closest_t, start, dir, cl_scene);
 
-			closest_obj = *ptr;
+	if (ptr)
+	{
+		closest_obj = *ptr;
 
-			start = start + dir * closest_t;
+		double3 P = start + dir * closest_t;
 
-			colorr = get_rgb_from_texture(start, closest_obj, data);
-			//return (rgb_to_color(colorr));
-			N = get_normal(start, closest_obj);
+		t_rgb colorr = get_rgb_from_texture(P, closest_obj, data);
 
-			intensity = compute_lighting(start, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
-			recalc_rgb(&ret, &colorr, intensity, spec_intensity, coeff, 1.0 - closest_obj.reflective - closest_obj.transparency);
-			coeff *= closest_obj.reflective;
-			if (closest_obj.transparency > 0.0)
-			{
-				t_rgb ref = refr1(ptr, cl_scene, start, dir, depth, data);
-				recalc_rgb(&ret, &ref, 1.0, 1.0, coeff, closest_obj.transparency);
-			}
-			depth--;
-			if (closest_obj.reflective <= 0.0)
-				break;
-			dir = reflect_ray((-1.0) * dir, N);
-		}
-	return (rgb_to_color(ret));
+		double3 N = get_normal(P, closest_obj);
+
+		intensity = compute_lighting(P, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
+
+		if ((colorr.r *= intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g *= intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b *= intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if ((colorr.r += 255.0 * spec_intensity) >= 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g += 255.0 * spec_intensity) >= 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b += 255.0 * spec_intensity) >= 255.0)
+			colorr.b = 255.0;
+
+		if (depth <= 0 || closest_obj.reflective <= 0)
+			return (rgb_to_color(colorr));
+
+		double3 R = reflect_ray((-1.0) * dir, N);
+
+		t_rgb reflected = color_to_rgb(reflect1(cl_scene, P, R, depth - 1, data));
+		if ((colorr.r = colorr.r * (1 - closest_obj.reflective) + reflected.r * closest_obj.reflective) > 255.0)
+			colorr.r = 255.0;
+		if ((colorr.g = colorr.g * (1 - closest_obj.reflective) + reflected.g * closest_obj.reflective) > 255.0)
+			colorr.g = 255.0;
+		if ((colorr.b = colorr.b * (1 - closest_obj.reflective) + reflected.b * closest_obj.reflective) > 255.0)
+			colorr.b = 255.0;
+		return (rgb_to_color(colorr));
+	}
+	return(0x000000);
 }
 
 
@@ -1236,7 +1418,6 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 		cl_scene.objs[i].specular = scene->objs[i].specular;
 		cl_scene.objs[i].angle = scene->objs[i].angle;
 		cl_scene.objs[i].tex = scene->objs[i].tex;
-		cl_scene.objs[i].transparency = scene->objs[i].transparency;
 		i++;
 	}
 	while (j < scene->c_lights)

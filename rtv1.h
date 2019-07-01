@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/29 16:44:56 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/01 19:21:45 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ typedef struct	s_obj
 	t_rgb		rgb;
 	double		specular;
 	double		reflective;
+	double		transparency;
 	int			tex;
 }				t_obj;
 
