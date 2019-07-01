@@ -1183,13 +1183,13 @@ int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __glob
 			N = get_normal(start, closest_obj);
 
 			intensity = compute_lighting(start, N, -dir, closest_obj.specular, cl_scene, &spec_intensity);
-			recalc_rgb(&ret, &colorr, intensity, spec_intensity, coeff, 1.0 - closest_obj.reflective - closest_obj.transparency);
+			recalc_rgb(&ret, &colorr, intensity, spec_intensity, coeff, 1.0 - closest_obj.reflective/* - closest_obj.transparency*/);
 			coeff *= closest_obj.reflective;
-			if (closest_obj.transparency > 0.0)
+		/*	if (closest_obj.transparency > 0.0)
 			{
 				t_rgb ref = refr1(ptr, cl_scene, start, dir, depth, data);
 				recalc_rgb(&ret, &ref, 1.0, 1.0, coeff, closest_obj.transparency);
-			}
+			}*/
 			depth--;
 			if (closest_obj.reflective <= 0.0)
 				break;
