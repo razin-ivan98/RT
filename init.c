@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/29 16:33:17 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/04 17:10:57 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,6 @@ void		graphics_init(t_rtv1 *rtv1)
     LIBUI_NewButton((t_but_constr){180, 400+170, "Reflective-", "Reflective-", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 
 	LIBUI_NewButton((t_but_constr){20, 400+300, "Edit", "Edit", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-
 
 	LIBUI_NewButton((t_but_constr){200, 400+300, "Texture1", "Texture1", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 	LIBUI_NewButton((t_but_constr){200, 400+350, "Texture2", "Texture2", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);

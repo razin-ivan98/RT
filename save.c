@@ -33,12 +33,31 @@ void save(t_rtv1 *rtv1, char *filename)
             ft_putstr_fd("cone\n", fd);
         else if (rtv1->scene.objs[i].type == plane)
             ft_putstr_fd("plane\n", fd);
+        else if (rtv1->scene.objs[i].type == paraboloid)
+            ft_putstr_fd("paraboloid\n", fd);
+        else if (rtv1->scene.objs[i].type == triangle)
+            ft_putstr_fd("triangle\n", fd);
         ft_putstr_fd("\tposition = (", fd);
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].center.x), fd);
         ft_putstr_fd(", ", fd);
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].center.y), fd);
         ft_putstr_fd(", ", fd);
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].center.z), fd);
+
+        ft_putstr_fd(")\n\tpos2 = (", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p2.x), fd);
+        ft_putstr_fd(", ", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p2.y), fd);
+        ft_putstr_fd(", ", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p2.z), fd);
+
+        ft_putstr_fd(")\n\tpos3 = (", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p3.x), fd);
+        ft_putstr_fd(", ", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p3.y), fd);
+        ft_putstr_fd(", ", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p3.z), fd);
+
         ft_putstr_fd(")\n\tdirection = (", fd);
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].dir.x), fd);
         ft_putstr_fd(", ", fd);

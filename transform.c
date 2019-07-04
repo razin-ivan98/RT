@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:23:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/04/12 13:31:41 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/04 17:11:27 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ t_vector dir, t_scene *scene)
 	return (closest_obj);
 }
 
-void			select_object(t_rtv1 *rtv1, int x, int y)
+void			select_object(t_rtv1 *rtv1, int x, int y, t_obj **out)
 {
 	t_vector		pixel_pos_3d;
 	static t_obj	*ptr;
@@ -73,7 +73,7 @@ void			select_object(t_rtv1 *rtv1, int x, int y)
 	ptr = get_closest_object(&(rtv1->selected_t), rtv1->scene.camera.center,
 			pixel_pos_3d, &(rtv1->scene));
 	if (ptr)
-		rtv1->selected = ptr;
+		*out = ptr;
 	else
 		rtv1->left_mouse_pressed = 0;
 }

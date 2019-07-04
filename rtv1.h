@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/01 19:21:45 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/04 20:56:45 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,10 @@ typedef struct	s_s
 typedef struct	s_obj
 {
 	int			type;
+	int			id;
 	t_vector	center;
+	t_vector	p2;
+	t_vector	p3;
 	t_vector	dir;
 	t_vector	rot;
 	double		angle;
@@ -89,6 +92,7 @@ typedef struct	s_obj
 	double		reflective;
 	double		transparency;
 	int			tex;
+
 }				t_obj;
 
 typedef struct	s_light
@@ -218,11 +222,23 @@ void			err_exit(void);
 int				clean_exit(t_rtv1 *rtv1);
 
 t_vector		rotate_view(t_vector point, double alpha, double beta);
-void			select_object(t_rtv1 *rtv1, int x, int y);
+void			select_object(t_rtv1 *rtv1, int x, int y, t_obj **out);
 
 
 void save(t_rtv1 *rtv1, char *filename);
 void save_as(t_rtv1 *rtv1);
+
+
+void new_triangle(t_rtv1 *rtv1);
+void new_paraboloid(t_rtv1 *rtv1);
+void new_plane(t_rtv1 *rtv1);
+void new_cylinder(t_rtv1 *rtv1);
+void new_cone(t_rtv1 *rtv1);
+void new_sphere(t_rtv1 *rtv1);
+
+
+
+
 
 
 

@@ -1,34 +1,100 @@
 camera_init
 {
-	position = (0.0, 0.500, 0.0)
+	position = (0.0, 0.0, 0.0)
 	direction = (0.0, 0.0, 1.0)
 }
 
 new object
 {
 	type = sphere
-	position = (-0.287, -0.226, 7.0)
-	direction = (0.0, 1.0, 0.0)
-	rotate = (1.350, -2.149, 0.0)
+	position = (-0.579, 2.65, 6.0)
+	pos2 = (0.0, 0.0, 6.0)
+	pos3 = (0.0, 0.0, 6.0)
+	direction = (-0.577, -0.577, -0.577)
+	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
-	color = 6696806
-	specular = 20.0
+	color = 255
+	specular = 500.0
 	reflective = 0.0
-	angle = 1.0
+	angle = 0.0
 	texture-id = -1
 }
 
 new object
 {
-	type = sphere
-	position = (2.87, 0.815, 7.0)
-	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+	type = triangle
+	position = (-1.0, 0.0, 6.0)
+	pos2 = (0.0, 1.0, 6.0)
+	pos3 = (1.0, 0.0, 6.0)
+	direction = (0.0, 0.0, 0.0)
 	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
+	radius = 0.500
 	color = 15209374
 	specular = 20.0
 	reflective = 0.0
-	angle = 0.0
+	angle = 2.0
+	texture-id = -1
+}
+new object
+{
+	type = triangle
+	position = (-1.0, 0.0, 6.0)
+	pos2 = (0.0, -1.0, 6.0)
+	pos3 = (1.0, 0.0, 6.0)
+	direction = (0.0, 0.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.500
+	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	angle = 2.0
+	texture-id = -1
+}
+new object
+{
+	type = triangle
+	position = (-1.0, 0.0, 6.0)
+	pos2 = (0.0, 1.0, 5.0)
+	pos3 = (1.0, 0.0, 6.0)
+	direction = (0.0, 0.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.500
+	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	angle = 2.0
+	texture-id = -1
+}
+new object
+{
+	type = triangle
+	position = (-1.0, 0.0, 6.0)
+	pos2 = (-2.0, 1.0, 5.0)
+	pos3 = (1.0, 0.0, 6.0)
+	direction = (0.0, 0.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.500
+	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	angle = 2.0
+	texture-id = -1
+}
+
+
+new object
+{
+	type = triangle
+	position = (-1.0, 0.0, 6.0)
+	pos2 = (0.0, 1.0, 6.0)
+	pos3 = (1.0, 0.0, 6.0)
+	direction = (0.0, 0.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.500
+	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	angle = 2.0
 	texture-id = -1
 }
 

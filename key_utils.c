@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/01 18:57:16 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/04 17:10:48 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,14 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 	if (button == SDL_BUTTON_LEFT)
 	{
 		if (x < 1000)
-			select_object(rtv1, x, y);
+		{
+				select_object(rtv1, x, y, &(rtv1->selected));
+
+		}
 		else
 		{
+
+
 			pressed_button = LIBUI_IsButtonPressed(x - CH, y, rtv1->buttons, rtv1->c_buttons);
 			if (pressed_button == -1)
 			{
@@ -67,84 +72,27 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 			}
 			if (!ft_strcmp(func, "New Sphere"))
 			{
-				rtv1->scene.objs[rtv1->scene.c_objs].type = sphere;
-				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].radius = 1.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
-				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
-
-				rtv1->scene.c_objs++;
+				new_sphere(rtv1);
 			}
 			else if (!ft_strcmp(func, "New Cylinder"))
 			{
-				rtv1->scene.objs[rtv1->scene.c_objs].type = cylinder;
-				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].radius = 1.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
-				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
-
-				rtv1->scene.c_objs++;
+				new_cylinder(rtv1);
 			}
 			else if (!ft_strcmp(func, "New Cone"))
 			{
-				rtv1->scene.objs[rtv1->scene.c_objs].type = cone;
-				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
-				rtv1->scene.objs[rtv1->scene.c_objs].angle = 0.2;
-				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
-
-				rtv1->scene.c_objs++;
+				new_cone(rtv1);
 			}
 			else if (!ft_strcmp(func, "New Plane"))
 			{
-				rtv1->scene.objs[rtv1->scene.c_objs].type = plane;
-				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
-				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
-				rtv1->scene.c_objs++;
+				new_plane(rtv1);
 			}
 			else if (!ft_strcmp(func, "New Triangle"))
 			{
-				rtv1->scene.objs[rtv1->scene.c_objs].type = triangle;
-				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){-1.0, 0.0, 7.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 6.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){1.0, 0.0, 7.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
-				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
-				rtv1->scene.objs[rtv1->scene.c_objs].angle = 2.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].radius = 0.5;
-				rtv1->scene.c_objs++;
+				new_triangle(rtv1);
 			}
 			else if (!ft_strcmp(func, "New Paraboloid"))
 			{
-				rtv1->scene.objs[rtv1->scene.c_objs].type = paraboloid;
-				rtv1->scene.objs[rtv1->scene.c_objs].center = (t_vector){0.0, 0.0, 7.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].dir = (t_vector){0.0, 1.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rot = (t_vector){0.0, 0.0, 0.0};
-				rtv1->scene.objs[rtv1->scene.c_objs].rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
-				rtv1->scene.objs[rtv1->scene.c_objs].specular = 20.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].reflective = 0.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].tex = -1;
-				rtv1->scene.objs[rtv1->scene.c_objs].angle = 1.0;
-				rtv1->scene.objs[rtv1->scene.c_objs].radius = 1.0;
-				rtv1->scene.c_objs++;
+				new_paraboloid(rtv1);
 			}
 			
 			else if (!ft_strcmp(func, "Delete Object"))
@@ -236,6 +184,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 			{
 				save_as(rtv1);
 			}
+
 		/*	else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Expand"))
 			{
 				rtv1->list->expand = rtv1->list->expand ? 0 : 1;

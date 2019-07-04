@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:58:18 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/01 19:24:16 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/04 21:17:33 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@ void		set_obj_type(char *line, t_obj *obj)
 		obj->type = cone;
 	else if (ft_strstr(line, "plane"))
 		obj->type = plane;
+	else if (ft_strstr(line, "paraboloid"))
+		obj->type = paraboloid;
+	else if (ft_strstr(line, "triangle"))
+		obj->type = triangle;
 	else
 		err_exit();
 }
@@ -46,6 +50,10 @@ t_obj		*read_obj_parameters(char *line, t_obj **obj)
 		set_obj_type(line, *obj);
 	else if (ft_strstr(line, "position"))
 		(*obj)->center = read_vector(ft_strchr(line, '=') + 1);
+	else if (ft_strstr(line, "pos2"))
+		(*obj)->p2 = read_vector(ft_strchr(line, '=') + 1);
+	else if (ft_strstr(line, "pos3"))
+		(*obj)->p3 = read_vector(ft_strchr(line, '=') + 1);
 	else if (ft_strstr(line, "radius"))
 		(*obj)->radius = ft_atof(ft_strchr(line, '=') + 1);
 	else if (ft_strstr(line, "color"))

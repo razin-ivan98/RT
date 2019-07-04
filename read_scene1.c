@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:55:19 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/29 14:06:58 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/04 17:09:45 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ static void		new_object(t_scene *scene, t_obj **obj, int *i)
 {
 	*i = (*i) + 1;
 	*obj = &(scene->objs[*i]);
+	(*obj)->id = *i;
+
 }
 
 static void		new_light(t_scene *scene, t_light **light, int *j)
