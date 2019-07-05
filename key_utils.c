@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/04 17:10:48 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/05 18:46:13 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,18 @@ t_list_item_addr list_utils(t_rtv1 *rtv1, int x, int y)
 int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 {
 	int pressed_button;
-	int edit_pressed;
+//	int edit_pressed;
 	char func[64];
 	rtv1->prev_x = x;
 	rtv1->prev_y = y;
-	rtv1->selected_t = 9999999.9;
+	
 	if (y < 0)
 		return (0);
 	if (button == SDL_BUTTON_LEFT)
 	{
 		if (x < 1000)
 		{
-				select_object(rtv1, x, y, &(rtv1->selected));
+			select_object(rtv1, x, y, &(rtv1->selected));
 
 		}
 		else
@@ -105,6 +105,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 
 				rtv1->scene.objs[selected_id] = rtv1->scene.objs[rtv1->scene.c_objs - 1];
 				rtv1->scene.c_objs--;
+				rtv1->scene.arrows_on = 0;
 				/*if (!rtv1->scene.c_objs)
 					rtv1->selected = NULL;
 				else
@@ -203,7 +204,8 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 					rtv1->lists[0].is_dropped = 1;
 				//printf("\n%d\n\n", rtv1->lists[0].is_dropped);
 			}
-		} 
+		}
+		rtv1->left_mouse_pressed = 1;
 	}
 	/*else if (button == 4)
 		rtv1->scene.camera.center.z -= 0.2;
@@ -212,7 +214,10 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 	else if (button == SDL_BUTTON_RIGHT)
 		rtv1->right_mouse_pressed = 1;
 	else if (button == SDL_BUTTON_MIDDLE)
+	{
+		select_object(rtv1, x, y, &rtv1->selected);
 		rtv1->mid_mouse_pressed = 1;
+	}
 	//provider(rtv1);
 	return (0);
 }
@@ -225,6 +230,7 @@ int	mouse_release(int button, int x, int y, t_rtv1 *rtv1)
 	rtv1->left_mouse_pressed = 0;
 	rtv1->right_mouse_pressed = 0;
 	rtv1->mid_mouse_pressed = 0;
+	rtv1->arrow = -1;
 	if (x > 1000)
 	{
 		int i = 0;
@@ -296,10 +302,27 @@ int	mouse_move(int x, int y, t_rtv1 *rtv1)
 	{
 		dx = x - rtv1->prev_x;
 		dy = y - rtv1->prev_y;
-		if (!(rtv1->selected))
-			rtv1->selected = &(rtv1->scene.objs[0]);
-		rtv1->selected->center.x += 0.001 * dx * rtv1->selected_t;
-		rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
+		//if (!(rtv1->selected))
+		//rtv1->selected = &(rtv1->scene.objs[0]);
+		if (rtv1->selected && rtv1->arrow != -1)
+		{
+			if (rtv1->arrow == 0)
+			{
+				rtv1->selected->center.x += 0.001 * dx * rtv1->selected_t * (cos(rtv1->scene.view_beta) > 0 ? 1 : -1);
+				//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
+			}
+			else if (rtv1->arrow == 1)
+			{
+				//rtv1->selected->center.x += 0.001 * dx * rtv1->selected_t;
+				rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
+			}
+			else if (rtv1->arrow == 2)
+			{
+				rtv1->selected->center.z += 0.001 * dx * rtv1->selected_t * (sin(rtv1->scene.view_beta) > 0 ? 1 : -1);
+				//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
+			}
+		}
+		set_arrows_pos(rtv1);
 	}
 	else if (rtv1->mid_mouse_pressed)
 	{
@@ -314,7 +337,29 @@ int	mouse_move(int x, int y, t_rtv1 *rtv1)
 		}
 		else
 		{
-			rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){-0.05 * dy, 0.05 * dx, 0.0}));
+			if (rtv1->selected && rtv1->arrow != -1)
+			{
+				
+				if (rtv1->arrow == 0)
+				{
+					rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.05 * dy, 0.0, 0.0}));
+					//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
+				}
+				else if (rtv1->arrow == 1)
+				{
+					//rtv1->selected->center.x += 0.001 * dx * rtv1->selected_t;
+					rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.0, 0.05 * dx, 0.0}));
+				}
+				else if (rtv1->arrow == 2)
+				{
+					rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.0, 0.0, 0.05 * dy}));
+					//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
+				}
+
+
+			}
+
+			
 			//rtv1->selected->dir = vector_normalize(rot_v(rtv1->selected->dir, (t_vector){1.0, 0.0,0.0}, -0.05 * dy));
 			//rtv1->selected->dir = vector_normalize(rot_v(rtv1->selected->dir, (t_vector){0.0,1.0,0.0}, 0.05 * dx));
 			//rtv1->selected->rot.y -= 0.05 * dx;
@@ -337,9 +382,15 @@ int	key_pressed(int key, t_rtv1 *rtv1)
 	else if (rtv1->active_edit != -1)
 		LIBUI_InputLetter(key, rtv1->edits, rtv1->active_edit, rtv1->shift_pressed);
 	else if (key == SDLK_RIGHT)
-		rtv1->scene.camera.center.x += 0.5;
+	{
+		rtv1->scene.camera.center.x += 0.5 * cos(rtv1->scene.view_beta);
+		rtv1->scene.camera.center.z += 0.5 * sin(rtv1->scene.view_beta);
+	}
 	else if (key == SDLK_LEFT)
-		rtv1->scene.camera.center.x -= 0.5;
+	{
+		rtv1->scene.camera.center.x -= 0.5 * cos(rtv1->scene.view_beta);
+		rtv1->scene.camera.center.z -= 0.5 * sin(rtv1->scene.view_beta);
+	}
 	else if (key == SDLK_UP)
 		rtv1->scene.camera.center.y += 0.5;
 	else if (key == SDLK_DOWN)
@@ -358,6 +409,17 @@ int	key_pressed(int key, t_rtv1 *rtv1)
 	if (key == 1073742049)
 		rtv1->shift_pressed = 1;
 	//provider(rtv1);
+	return (0);
+}
+
+int mouse_wheel(int y, t_rtv1 *rtv1)
+{
+
+	rtv1->scene.camera.center.x -= y * sin(rtv1->scene.view_beta);
+	rtv1->scene.camera.center.z -= y * cos(rtv1->scene.view_beta);
+
+
+
 	return (0);
 }
 

@@ -1,20 +1,36 @@
 camera_init
 {
-	position = (0.0, 0.0, 0.0)
+	position = (3.0, 4.500, 0.0)
 	direction = (0.0, 0.0, 1.0)
 }
 
 new object
 {
 	type = sphere
-	position = (-0.579, 2.65, 6.0)
+	position = (150002.727, 3.224, 11.399)
 	pos2 = (0.0, 0.0, 6.0)
 	pos3 = (0.0, 0.0, 6.0)
 	direction = (-0.577, -0.577, -0.577)
-	rotate = (0.0, 0.0, 0.0)
+	rotate = (-4.549, 2.490, 0.0)
 	radius = 1.0
 	color = 255
 	specular = 500.0
+	reflective = 0.0
+	angle = 0.0
+	texture-id = 2
+}
+
+new object
+{
+	type = plane
+	position = (0.142, -0.236, 11.399)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.229, 0.191, -0.954)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 7479366
+	specular = 20.0
 	reflective = 0.0
 	angle = 0.0
 	texture-id = -1
@@ -22,80 +38,82 @@ new object
 
 new object
 {
-	type = triangle
-	position = (-1.0, 0.0, 6.0)
-	pos2 = (0.0, 1.0, 6.0)
-	pos3 = (1.0, 0.0, 6.0)
-	direction = (0.0, 0.0, 0.0)
+	type = plane
+	position = (0.157, 0.619, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.805, -0.563, -0.182)
 	rotate = (0.0, 0.0, 0.0)
-	radius = 0.500
-	color = 15209374
+	radius = 0.0
+	color = 1484752
 	specular = 20.0
-	reflective = 0.0
-	angle = 2.0
-	texture-id = -1
-}
-new object
-{
-	type = triangle
-	position = (-1.0, 0.0, 6.0)
-	pos2 = (0.0, -1.0, 6.0)
-	pos3 = (1.0, 0.0, 6.0)
-	direction = (0.0, 0.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 0.500
-	color = 15209374
-	specular = 20.0
-	reflective = 0.0
-	angle = 2.0
-	texture-id = -1
-}
-new object
-{
-	type = triangle
-	position = (-1.0, 0.0, 6.0)
-	pos2 = (0.0, 1.0, 5.0)
-	pos3 = (1.0, 0.0, 6.0)
-	direction = (0.0, 0.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 0.500
-	color = 15209374
-	specular = 20.0
-	reflective = 0.0
-	angle = 2.0
-	texture-id = -1
-}
-new object
-{
-	type = triangle
-	position = (-1.0, 0.0, 6.0)
-	pos2 = (-2.0, 1.0, 5.0)
-	pos3 = (1.0, 0.0, 6.0)
-	direction = (0.0, 0.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 0.500
-	color = 15209374
-	specular = 20.0
-	reflective = 0.0
-	angle = 2.0
+	reflective = 1.0
+	angle = 0.0
 	texture-id = -1
 }
 
+new object
+{
+	type = plane
+	position = (-0.430, -0.580, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 10358838
+	specular = 20.0
+	reflective = 1.0
+	angle = 0.0
+	texture-id = -1
+}
 
 new object
 {
-	type = triangle
-	position = (-1.0, 0.0, 6.0)
-	pos2 = (0.0, 1.0, 6.0)
-	pos3 = (1.0, 0.0, 6.0)
-	direction = (0.0, 0.0, 0.0)
+	type = plane
+	position = (0.603, 5.929, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.371, -0.889, -0.264)
 	rotate = (0.0, 0.0, 0.0)
-	radius = 0.500
-	color = 15209374
+	radius = 0.0
+	color = 3683702
+	specular = 20.0
+	reflective = 1.0
+	angle = 0.0
+	texture-id = -1
+}
+
+new object
+{
+	type = plane
+	position = (6.663, 0.389, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-0.904, 0.190, 0.380)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 2015510
+	specular = 20.0
+	reflective = 1.0
+	angle = 0.0
+	texture-id = -1
+}
+
+new object
+{
+	type = cone
+	position = (5.437, 3.229, 11.599)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.362, 0.920, 0.146)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.300
+	color = 15259189
 	specular = 20.0
 	reflective = 0.0
-	angle = 2.0
-	texture-id = -1
+	angle = 0.500
+	texture-id = 2
 }
 
 new light

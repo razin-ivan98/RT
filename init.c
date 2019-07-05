@@ -6,17 +6,37 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/04 17:10:57 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/05 16:50:46 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
+void		arrows_init(t_rtv1 *rtv1)
+{
+	rtv1->scene.arrows_on = 0;
+	rtv1->scene.arrows[0].type = arrow;
+	rtv1->scene.arrows[1].type = arrow;
+	rtv1->scene.arrows[2].type = arrow;
+
+	rtv1->scene.arrows[0].center = vector_init(0.0, 0.0, 6.0);
+	rtv1->scene.arrows[1].center = vector_init(0.0, 0.0, 6.0);
+	rtv1->scene.arrows[2].center = vector_init(0.0, 0.0, 6.0);
+
+	rtv1->scene.arrows[0].dir = vector_init(1.0, 0.0, 0.0);
+	rtv1->scene.arrows[1].dir = vector_init(0.0, 1.0, 0.0);
+	rtv1->scene.arrows[2].dir = vector_init(0.0, 0.0, 1.0);
+
+	rtv1->scene.arrows[0].rgb = (t_rgb){255, 0, 0};
+	rtv1->scene.arrows[1].rgb = (t_rgb){0, 255, 0};
+	rtv1->scene.arrows[2].rgb = (t_rgb){0, 0, 255};
+}
+
 void		scene_init(t_rtv1 *rtv1, char *name)
 {
 
 	ft_strcpy(rtv1->scene_file_name, name);
-	
+	arrows_init(rtv1);
 	rtv1->scene.shadows_on = 1;
 	read_scene(&(rtv1->scene), rtv1->scene_file_name);
 }

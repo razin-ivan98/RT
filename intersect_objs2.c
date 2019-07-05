@@ -36,3 +36,31 @@ double ray_intersect_paraboloid(t_vector start, t_vector dir, t_obj *parab)
 	return (0);
 
 }
+
+double ray_intersect_arrow(t_vector start, t_vector dir, t_obj *cyl)
+{
+	double zeroThreshold = 0.0001;
+	t_vector tmp = start;
+	start = vector_subt(start, cyl->center);
+
+	double dot_start_cyl_dir = scal_mult(start, cyl->dir);
+	double dot_dir_cyl_dir = scal_mult(dir, cyl->dir);
+
+	double a = scal_mult(dir, dir) - dot_dir_cyl_dir * dot_dir_cyl_dir;
+	double b = 2 * (scal_mult(dir, start) - dot_dir_cyl_dir * dot_start_cyl_dir);
+	double c = scal_mult(start, start) - dot_start_cyl_dir * dot_start_cyl_dir - 0.05 * 0.05;
+	double D = b*b - 4*a*c;
+
+	if ( D < zeroThreshold )
+		return (0.0);
+	double qD = sqrt(D);
+	double t1 = ( -b + qD)/(2*a); 
+	double t2 = ( -b - qD)/(2*a);
+	if (t1 <= zeroThreshold)
+		return (0.0);
+	double t = (t2 > zeroThreshold) ? t2 : t1; 
+	t_vector hitpoint = vector_sum(vector_int_mult(dir, t), tmp);
+	if (vector_length(vector_subt(hitpoint, cyl->center)) > 0.5)
+		return 0.0;
+		return (t);
+}

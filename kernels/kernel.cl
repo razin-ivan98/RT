@@ -31,7 +31,8 @@ typedef enum
 	torus,
 	paraboloid,
 	triangle,
-	poligonal
+	poligonal,
+	arrow
 }			obj_type;
 
 typedef struct s_vector
@@ -95,9 +96,11 @@ typedef struct s_scene
 	double view_alpha;
 	double view_beta;
 	t_camera camera;
+	t_obj		arrows[3];
 	t_light lights[100];
 	t_obj objs[100];
 	int shadows_on;
+		int			arrows_on;
 }		t_scene;
 
 typedef struct s_cl_obj
@@ -140,9 +143,11 @@ typedef struct s_cl_scene
 	int c_objs;
 	int c_lights;
 	t_cl_camera camera;
+	t_cl_obj		arrows[3];
 	t_cl_light lights[100];
 	t_cl_obj objs[100];
 	int shadows_on;
+		int			arrows_on;
 }		t_cl_scene;
 
 t_rgb color_to_rgb(int color)
@@ -349,6 +354,7 @@ double ray_intersect_paraboloid(double3 start, double3 dir, t_cl_obj *parab)
 }
 
 ///////////////
+/*
 int check_sphere(double3 start, double3 dir, double radius, double3 pos)
 {
 	t_quad		q;
@@ -498,7 +504,7 @@ double ray_intersect_torus(double3 start, double3 dir, t_cl_obj *torus)
 		return (solve[1] + dist);
 	else
 		return(0);
-}
+}*/
 ///////////////////
 double ray_intersect_plane(double3 start, double3 dir, t_cl_obj *plane)
 {
@@ -538,6 +544,35 @@ double ray_intersect_cylinder(double3 start, double3 dir, t_cl_obj *cyl)
 	if (t1 <= zeroThreshold)
 		return (0.0);
 	double t = (t2 > zeroThreshold) ? t2 : t1; 
+
+	return (t);
+}
+
+double ray_intersect_arrow(double3 start, double3 dir, t_cl_obj *cyl)
+{
+	double zeroThreshold = 0.0001;
+	double3 tmp = start;
+	start = start - cyl->center;
+
+	double dot_start_cyl_dir = dot(start, cyl->dir);
+	double dot_dir_cyl_dir = dot(dir, cyl->dir);
+
+	double a = dot(dir, dir) - dot_dir_cyl_dir * dot_dir_cyl_dir;
+	double b = 2 * (dot(dir, start) - dot_dir_cyl_dir * dot_start_cyl_dir);
+	double c = dot(start, start) - dot_start_cyl_dir * dot_start_cyl_dir - 0.05 * 0.05;
+	double D = b*b - 4*a*c;
+
+	if ( D < zeroThreshold )
+		return (0.0);
+	double qD = sqrt(D);
+	double t1 = ( -b + qD)/(2*a); 
+	double t2 = ( -b - qD)/(2*a);
+	if (t1 <= zeroThreshold)
+		return (0.0);
+	double t = (t2 > zeroThreshold) ? t2 : t1; 
+	double3 hitpoint = t * dir + tmp;
+	if (length(hitpoint - cyl->center) > 0.5)
+		return 0.0;
 		return (t);
 }
 
@@ -601,8 +636,8 @@ double ray_intersect_obj(double3 start, double3 dir, t_cl_obj *obj)
 		return (ray_intersect_cylinder(start, dir, obj));
 	else if (obj->type == plane)
 		return (ray_intersect_plane(start, dir, obj));
-	else if (obj->type == torus)
-		return (ray_intersect_torus(start, dir, obj));
+	/*else if (obj->type == torus)
+		return (ray_intersect_torus(start, dir, obj));*/
 	else if (obj->type == paraboloid)
 		return (ray_intersect_paraboloid(start, dir, obj));
 	else if (obj->type == triangle)
@@ -705,6 +740,9 @@ double compute_lighting(double3 P, double3 N, double3 V, t_cl_obj obj, t_cl_scen
 	double shadow_t;
 	t_cl_obj *shadow_obj = 0;
 
+	if (obj.type == arrow)
+		return (1.0);
+
 	for (int i = 0; i < cl_scene->c_lights; i++)
 	{
 		shadow_t = UPPER_BOUND;
@@ -735,7 +773,7 @@ double compute_lighting(double3 P, double3 N, double3 V, t_cl_obj obj, t_cl_scen
 			}
 			double n_dot_l = dot(N, L);
 			if (n_dot_l > -0.0)
-				intensity += cl_scene->lights[i].intensity * n_dot_l / (/*1.0/*length(N) */ length(L));
+				intensity += cl_scene->lights[i].intensity * n_dot_l / (length(L));
 
 			if (obj.specular > 0.0)
 			{
@@ -1160,7 +1198,27 @@ int get_index_by_id(t_cl_scene *scene, id)
 	return (-1);
 }
 
-
+int is_intersect_arrow(t_cl_scene *cl_scene, double3 start, double3 dir)
+{
+	double t = 9999999.0;
+	double tmp;
+	int		index;
+	int i = 0;
+	while (i < 3)
+	{
+		tmp = ray_intersect_arrow(start, dir, &cl_scene->arrows[i]);
+		if (tmp < t && tmp != 0.0)
+		{
+			t = tmp;
+			index = i;
+		}
+		i++;
+	}
+	if (t == 9999999.0)
+		return (-1);
+	else
+		return (rgb_to_color(cl_scene->arrows[index].rgb));
+}
 
 int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
 {
@@ -1174,6 +1232,12 @@ int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __glob
 	int subt_index;
 	t_rgb colorr;
 	t_rgb ret = (t_rgb){0, 0, 0};
+	if (cl_scene->arrows_on)
+	{
+		int arr = is_intersect_arrow(cl_scene, start, dir);
+		if (arr != -1)
+			return(arr);
+	}
 		while (depth >= 0)
 		{
 			ptr = 0;
@@ -1235,6 +1299,7 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 	cl_scene.c_objs = scene->c_objs;
 
 	cl_scene.shadows_on = scene->shadows_on;
+	cl_scene.arrows_on = scene->arrows_on;
 	while (i < scene->c_objs)
 	{
 		ptr = scene->objs[i].center;
@@ -1260,6 +1325,26 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 		cl_scene.objs[i].tex = scene->objs[i].tex;
 		cl_scene.objs[i].transparency = scene->objs[i].transparency;
 		cl_scene.objs[i].id = scene->objs[i].id;
+
+
+
+		i++;
+	}
+	i = 0;
+	while (i < 3)
+	{
+		ptr = scene->arrows[i].center;
+		cl_scene.arrows[i].center = vector_to_double3(ptr);
+		ptr = scene->arrows[i].dir;
+		cl_scene.arrows[i].dir = vector_to_double3(ptr);
+
+
+
+
+		cl_scene.arrows[i].rgb = scene->arrows[i].rgb;
+		cl_scene.arrows[i].type = scene->arrows[i].type;
+
+	//	cl_scene.arrows[i].id = scene->objs[i].id;
 
 
 

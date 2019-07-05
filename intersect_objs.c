@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:41:13 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/29 15:58:35 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/05 17:31:12 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ static double	ray_intersect_sphere(t_vector start, t_vector dir, t_obj *obj)
 
 double			ray_intersect_obj(t_vector start, t_vector dir, t_obj *obj)
 {
+
 	if (obj->type == sphere)
 		return (ray_intersect_sphere(start, dir, obj));
 	else if (obj->type == cone)

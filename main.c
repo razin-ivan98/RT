@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/06/29 13:27:37 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/05 18:45:11 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,10 @@ void		provider(t_rtv1 *rtv1)
 				break;
 			case SDL_MOUSEMOTION:
 				mouse_move(ev.motion.x, ev.motion.y, rtv1);
+				break;
+			case SDL_MOUSEWHEEL:
+				mouse_wheel(ev.wheel.y, rtv1);
+				break;
 			default: break;
         }
 	

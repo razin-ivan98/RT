@@ -9,7 +9,7 @@ int get_free_id(t_rtv1 *rtv1)
     f_exit = 0;
     i = 0;
     id = rand();
-    while (1)
+    while (rtv1->scene.c_objs)
     {
         i = 0;
         while (i < rtv1->scene.c_objs)

@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/04 20:56:45 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/05 18:41:18 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ typedef enum	e_obj_type
 	plane,
 	torus,
 	paraboloid,
-	triangle
+	triangle,
+	arrow
 }				t_obj_type;
 
 typedef struct	s_vector
@@ -116,9 +117,11 @@ typedef struct	s_scene
 	double		view_alpha;
 	double		view_beta;
 	t_camera	camera;
+	t_obj		arrows[3];
 	t_light		lights[100];
 	t_obj		objs[100];
 	int			shadows_on;
+	int			arrows_on;
 }				t_scene;
 
 typedef struct	s_rtv1
@@ -155,6 +158,7 @@ typedef struct	s_rtv1
 	int					prev_x;
 	int					prev_y;
 	int					guide_on;
+	int					arrow;
 
 	t_scene				scene;
 
@@ -214,6 +218,7 @@ int				key_pressed(int key, t_rtv1 *rtv1);
 int				key_release(int key, t_rtv1 *rtv1);
 int				mouse_release(int button, int x, int y, t_rtv1 *rtv1);
 int				mouse_move(int x, int y, t_rtv1 *rtv1);
+int mouse_wheel(int y, t_rtv1 *rtv1);
 
 void			provider(t_rtv1 *rtv1);
 double			ray_intersect_obj(t_vector start, t_vector dir, t_obj *obj);
@@ -223,6 +228,14 @@ int				clean_exit(t_rtv1 *rtv1);
 
 t_vector		rotate_view(t_vector point, double alpha, double beta);
 void			select_object(t_rtv1 *rtv1, int x, int y, t_obj **out);
+
+void			set_arrows_pos(t_rtv1 *rtv1);
+
+
+
+
+
+double ray_intersect_arrow(t_vector start, t_vector dir, t_obj *cyl);
 
 
 void save(t_rtv1 *rtv1, char *filename);
