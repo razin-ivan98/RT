@@ -1,3 +1,4 @@
+D7E2D35D177681F269EB2E231DD28587
 camera_init
 {
 	position = (0.0, 0.0, -8.0)
@@ -8,6 +9,8 @@ new object
 {
 	type = plane
 	position = (0.0, -2.0, 0.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
 	direction = (0.0, 1.0, 0.0)
 	rotate = (0.0, 0.0, 0.0)
 	radius = 0.0
@@ -21,8 +24,10 @@ new object
 new object
 {
 	type = sphere
-	position = (-0.21, -0.120, 0.0)
-	direction = (0.0, 0.0, 0.0)
+	position = (-0.210, -0.120, 0.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
 	color = 2144527
@@ -37,28 +42,28 @@ new light
 	type = point
 	intensity = 0.300
 	position = (0.0, 5.0, 0.0)
-	direction = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
 }
 new light
 {
 	type = point
 	intensity = 0.300
 	position = (2.0, 5.0, 0.0)
-	direction = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
 }
 new light
 {
 	type = point
 	intensity = 0.300
 	position = (-2.0, 5.0, 0.0)
-	direction = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
 }
 new light
 {
 	type = ambient
 	intensity = 0.100
 	position = (0.0, 0.0, 0.0)
-	direction = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
 }
 
 

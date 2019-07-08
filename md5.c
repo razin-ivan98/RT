@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdint.h>
 
+char *itoa_16(int n);
+
 const unsigned int k[64] = {
     0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee ,
     0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501 ,
@@ -65,7 +67,7 @@ void md5(const unsigned char *initial_msg, size_t initial_len, unsigned char *di
         ;
 
     msg = malloc(new_len + 8);
-    memcpy(msg, initial_msg, initial_len);
+    memcpy(msg, initial_msg, initial_len);//////////////////////////////////
     msg[initial_len] = 0x80;
     for (offset = initial_len + 1; offset < new_len; offset++)
         msg[offset] = 0;
@@ -122,27 +124,35 @@ void md5(const unsigned char *initial_msg, size_t initial_len, unsigned char *di
     to_bytes(h3, digest + 12);
 }
 
-int main(int argc, char **argv)
+char *get_crypto_key(char *msg)
 {
-    char *msg = argv[1];
+    char *tmp;
     size_t len;
     int i;
     unsigned char result[16];
+    char *ret;
 
-    if (argc < 2) {
-        printf("usage: %s 'string'\n", argv[0]);
-        return 1;
-    }
+    ret = (char *)malloc(64);
+    len = strlen(msg);///////////////////////////////////
 
-    len = strlen(msg);
-
-    for (i = 0; i < 1000000; i++) {
+    for (i = 0; i < 1000; i++) {
         md5((unsigned char *)msg, len, result);
     }
 
     for (i = 0; i < 16; i++)
-        printf("%2.2x", (unsigned char)result[i]);
-    puts("");
+    {
+        tmp = itoa_16((unsigned char)result[i]);
+        if (tmp[0] == 0)
+            tmp[0] = 48;
+        if (tmp[1] == 0)
+            tmp[1] = 48;
+        ret[i * 2] = tmp[0];
+        ret[i * 2 + 1] = tmp[1];
+        free (tmp);
 
-    return 0;
+    }
+    ret[32] = 0;
+
+
+    return (ret);
 }

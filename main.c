@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/07/05 18:45:11 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/08 20:35:49 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,21 +134,30 @@ int			main(int ac, char **av)
 {
 	static t_rtv1 rtv1;
 
-	if (ac != 2)
+	if (ac < 2 || ac > 4)
 	{
 		ft_putendl("Argument is not valid.");
 		err_exit();
 	}
+	if ((ac > 2 && (ft_strcmp(av[2], "obj") && ft_strcmp(av[2], "obj")) && (ft_strcmp(av[2], "admin") && ft_strcmp(av[2], "admin"))) || ac == 2)
+	{
+		if (check_crypto_key(av[1]))
+		{
+			ft_putendl("иди нахуй, файл поврежден");
+			exit(-2);
+		}
+	}
+	rtv1.from_obj = 0;
+	if (ac > 2 && (!ft_strcmp(av[2], "obj") || !ft_strcmp(av[2], "obj")))
+	{
+		rtv1.from_obj = 1;
+	}
 	scene_init(&rtv1, av[1]);
+	printf("\n%d\n", rtv1.scene.c_lights);
 	graphics_init(&rtv1);
 	set_start_angles(&(rtv1.scene));
 	while(1)
 		provider(&rtv1);
-	/*mlx_hook(rtv1.win_ptr, 2, 0, key_pressed, &rtv1);
-	mlx_hook(rtv1.win_ptr, 4, 0, mouse_pressed, &rtv1);
-	mlx_hook(rtv1.win_ptr, 5, 0, mouse_release, &rtv1);
-	mlx_hook(rtv1.win_ptr, 6, 0, mouse_move, &rtv1);
-	mlx_hook(rtv1.win_ptr, 17, 0, clean_exit, &rtv1);
-	mlx_loop(rtv1.mlx_ptr);*/
+
 	return (0);
 }

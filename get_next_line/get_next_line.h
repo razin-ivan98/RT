@@ -5,30 +5,21 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/12/10 06:28:29 by chorange          #+#    #+#             */
-/*   Updated: 2019/02/18 19:31:18 by chorange         ###   ########.fr       */
+/*   Created: 2019/07/08 21:01:00 by chorange          #+#    #+#             */
+/*   Updated: 2019/07/08 21:01:02 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-
-# include "libft/libft.h"
-# include <unistd.h>
+# include "../libft/libft.h"
 # include <stdlib.h>
+# include <unistd.h>
+# define BUFF_SIZE 21
 
-# define BUFF_SIZE 1024
+# define MALL_CHECK(x) if (!(x)) return (-1);
+# define VAL_FILE(f, l, r) if ((f) < 0 || (l) == NULL || (r) < 0) return (-1);
 
-# define MALLCHECK(x) if (!(x)) return (-1);
-# define ERRCHECK(x, y, z) if ((x) < 0 || (y) == NULL || (z) < 0) return (-1);
-
-typedef struct		s_file
-{
-	char			reserv[BUFF_SIZE + 1];
-	int				fd;
-	struct s_file	*next;
-}					t_file;
-
-int					get_next_line(int fd, char **line);
+int						get_next_line(const int fd, char **line);
 
 #endif

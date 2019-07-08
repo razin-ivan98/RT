@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:23:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/05 18:17:36 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/08 21:49:56 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,4 +121,51 @@ void			select_object(t_rtv1 *rtv1, int x, int y, t_obj **out)
 	}
 	else
 		rtv1->left_mouse_pressed = 0;
+}
+
+
+void move_polygonal(double x, double y, double z, t_rtv1 *rtv1)
+{
+	int i;
+
+	i = 0;
+
+	while (i < rtv1->scene.c_objs)
+	{
+		if (rtv1->scene.objs[i].id == rtv1->selected->id)
+		{
+			rtv1->scene.objs[i].center.x += x;
+			rtv1->scene.objs[i].center.y += y;
+			rtv1->scene.objs[i].center.z += z;
+
+			rtv1->scene.objs[i].p2.x += x;
+			rtv1->scene.objs[i].p2.y += y;
+			rtv1->scene.objs[i].p2.z += z;
+
+			rtv1->scene.objs[i].p3.x += x;
+			rtv1->scene.objs[i].p3.y += y;
+			rtv1->scene.objs[i].p3.z += z;
+		}
+		i++;
+	}
+}
+
+void rot_polygonal(double x, double y, double z, t_rtv1 *rtv1)
+{
+	int i;
+
+	i = 0;
+
+	while (i < rtv1->scene.c_objs)
+	{
+		if (rtv1->scene.objs[i].id == rtv1->selected->id)
+		{
+			rtv1->scene.objs[i].center = /*vector_sum(*/rot(/*vector_subt(rtv1->selected->center, */rtv1->scene.objs[i].center/*)*/, (t_vector){x, y, z})/*, rtv1->selected->center)*/;
+
+			rtv1->scene.objs[i].p2 = /*vector_sum(*/rot(/*vector_subt(rtv1->selected->center, */rtv1->scene.objs[i].p2/*)*/, (t_vector){x, y, z})/*, rtv1->selected->center)*/;
+
+			rtv1->scene.objs[i].p3 = /*vector_sum(*/rot(/*vector_subt(rtv1->selected->center, */rtv1->scene.objs[i].p3/*)*/, (t_vector){x, y, z})/*, rtv1->selected->center)*/;
+		}
+		i++;
+	}
 }

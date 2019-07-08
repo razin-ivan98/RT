@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/05 16:50:46 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/08 20:26:43 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,10 @@ void		scene_init(t_rtv1 *rtv1, char *name)
 	ft_strcpy(rtv1->scene_file_name, name);
 	arrows_init(rtv1);
 	rtv1->scene.shadows_on = 1;
-	read_scene(&(rtv1->scene), rtv1->scene_file_name);
+	if (rtv1->from_obj)
+		read_obj(rtv1, rtv1->scene_file_name);
+	else
+		read_scene(&(rtv1->scene), rtv1->scene_file_name);
 }
 
 static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
@@ -60,15 +63,15 @@ static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
 		(const char **)&source_str, (const size_t *)&source_size, &rtv1->ret);
 	rtv1->ret = clBuildProgram(rtv1->program, 1, &rtv1->device_id,
 		NULL, NULL, NULL);
-		printf("%d", rtv1->ret);
+	//	printf("%d", rtv1->ret);
 
-	size_t l_size;
+/*	size_t l_size;
 	char *logg = NULL;
 		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &l_size);
 		logg = malloc(l_size);
 		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, l_size, logg, NULL);
 		puts(logg);
-	free(logg);
+	free(logg);*/
 //	free(source_str);
 }
 

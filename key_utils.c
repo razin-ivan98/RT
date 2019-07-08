@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/05 18:46:13 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/08 21:45:14 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,17 +308,26 @@ int	mouse_move(int x, int y, t_rtv1 *rtv1)
 		{
 			if (rtv1->arrow == 0)
 			{
-				rtv1->selected->center.x += 0.001 * dx * rtv1->selected_t * (cos(rtv1->scene.view_beta) > 0 ? 1 : -1);
+				if (rtv1->selected->type == triangle)
+					move_polygonal(0.001 * dx * rtv1->selected_t * (cos(rtv1->scene.view_beta) > 0 ? 1 : -1), 0.0, 0.0, rtv1);
+				else
+					rtv1->selected->center.x += 0.001 * dx * rtv1->selected_t * (cos(rtv1->scene.view_beta) > 0 ? 1 : -1);
 				//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
 			}
 			else if (rtv1->arrow == 1)
 			{
 				//rtv1->selected->center.x += 0.001 * dx * rtv1->selected_t;
-				rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
+				if (rtv1->selected->type == triangle)
+					move_polygonal(0.0, -0.001 * dy * rtv1->selected_t ,0.0, rtv1);
+				else
+					rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
 			}
 			else if (rtv1->arrow == 2)
 			{
-				rtv1->selected->center.z += 0.001 * dx * rtv1->selected_t * (sin(rtv1->scene.view_beta) > 0 ? 1 : -1);
+				if (rtv1->selected->type == triangle)
+					move_polygonal(0.0, 0.0, 0.001 * dx * rtv1->selected_t * (sin(rtv1->scene.view_beta) > 0 ? 1 : -1), rtv1);
+				else
+					rtv1->selected->center.z += 0.001 * dx * rtv1->selected_t * (sin(rtv1->scene.view_beta) > 0 ? 1 : -1);
 				//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
 			}
 		}
@@ -342,17 +351,26 @@ int	mouse_move(int x, int y, t_rtv1 *rtv1)
 				
 				if (rtv1->arrow == 0)
 				{
-					rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.05 * dy, 0.0, 0.0}));
+					if (rtv1->selected->type == triangle)
+						rot_polygonal(0.05 * dy, 0.0, 0.0, rtv1);
+					else
+						rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.05 * dy, 0.0, 0.0}));
 					//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
 				}
 				else if (rtv1->arrow == 1)
 				{
 					//rtv1->selected->center.x += 0.001 * dx * rtv1->selected_t;
-					rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.0, 0.05 * dx, 0.0}));
+					if (rtv1->selected->type == triangle)
+						rot_polygonal(0.0, 0.05 * dx, 0.0, rtv1);
+					else
+						rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.0, 0.05 * dx, 0.0}));
 				}
 				else if (rtv1->arrow == 2)
 				{
-					rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.0, 0.0, 0.05 * dy}));
+					if (rtv1->selected->type == triangle)
+						rot_polygonal(0.0, 0.0, 0.05 * dy, rtv1);
+					else
+						rtv1->selected->dir = vector_normalize(rot(rtv1->selected->dir, (t_vector){0.0, 0.0, 0.05 * dy}));
 					//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
 				}
 

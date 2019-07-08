@@ -1,79 +1,111 @@
+C0B7745FDFD56F4D529F5142EF35236E
 camera_init
 {
-	position = (2.0, 3.5, 0.0)
-	direction = (-0.5, -0.5, 1.0)
-}
-
-new light
-{
-	type = point
-	intensity = 0.6
-	position = (2.0, 0.1, 2.0)
-}
-
-new light
-{
-	type = point
-	intensity = 0.2
-	position = (-3.0, 0.0, 0.0)
-}
-
-new light
-{
-	type = ambient
-	intensity = 0.2
-}
-
-new object
-{
-	type = plane;
-	position = (0.0, -0.0, 10.0)
-	direction = (0.0, 0.0, -1.0)
-	color = 65230
-	specular = 0.0
-	reflective = 0.0
+	position = (2.0, 3.500, 0.0)
+	direction = (-0.500, -0.500, 1.0)
 }
 
 new object
 {
 	type = plane
-	direction = (0.0, 1.0, 0.0)
+	position = (0.0, 0.0, 10.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 0.0, -1.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 65230
+	specular = 0.0
+	reflective = 0.0
+	angle = 0.0
+	texture-id = 3
+}
+
+new object
+{
+	type = plane
 	position = (-1.0, -1.0, 0.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
 	color = 255
 	specular = 0.0
 	reflective = 0.0
+	angle = 0.0
+	texture-id = 2
 }
 
 new object
 {
 	type = cone
-	angle = 0.5
-	direction = (-0.7, 1.5, 0.0)
-	position = (0.0, 0, 4.0)
+	position = (0.0, 0.0, 4.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-0.422, 0.906, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
 	color = 16776960
 	specular = 10.0
 	reflective = 0.0
+	angle = 0.500
+	texture-id = 1
 }
 
 new object
 {
 	type = cylinder
-	radius = 0.4
-	direction = (1.0, 1.0, 0.0)
-	position = (0, 1.0, 4.0)
+	position = (0.0, 1.0, 4.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.707, 0.707, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.400
 	color = 6749952
 	specular = 0.0
 	reflective = 0.0
+	angle = 0.0
+	texture-id = 0
 }
 
 new object
 {
 	type = sphere
-	radius = 1
-	position = (0.4, 2.5, 4)
+	position = (0.400, 2.500, 4.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
 	color = 16711680
 	specular = 70.0
 	reflective = 0.0
+	angle = 0.0
+	texture-id = 4
 }
+
+new light
+{
+	type = point
+	intensity = 0.600
+	position = (2.0, 0.100, 2.0)
+	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+}
+new light
+{
+	type = point
+	intensity = 0.200
+	position = (-3.0, 0.0, 0.0)
+	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+}
+new light
+{
+	type = ambient
+	intensity = 0.200
+	position = (0.0, 0.0, 0.0)
+	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+}
+
 
 end

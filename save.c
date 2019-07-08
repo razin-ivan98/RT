@@ -1,10 +1,34 @@
 #include "rtv1.h"
 
+void save_with_defense(char *file_name)
+{
+    int fd;
+    char *str;
+    char *key;
+    int len;
+
+    fd = open(file_name, O_RDONLY);///////////////
+    str = (char *)malloc(300000);
+    len = read(fd, str, 300000);
+    str[len] = 0;
+    key = get_crypto_key(str);
+    close(fd);
+    fd = open(file_name, O_TRUNC | O_RDWR | O_CREAT ,  S_IRWXU | S_IRWXG | S_IRWXO);///////////////
+    ft_putendl_fd(key, fd);
+    ft_putstr_fd(str, fd);
+    close(fd);
+
+
+    free(key);
+    free(str);
+
+}
+
 void save(t_rtv1 *rtv1, char *filename)
 {
     int fd;
 
-    fd = open(filename, O_TRUNC | O_RDWR | O_CREAT ,  S_IRWXU | S_IRWXG | S_IRWXO);
+    fd = open(filename, O_TRUNC | O_RDWR | O_CREAT ,  S_IRWXU | S_IRWXG | S_IRWXO);/////////////////
 
     int i;
     i = 0;
@@ -117,6 +141,7 @@ void save(t_rtv1 *rtv1, char *filename)
     ft_putstr_fd("\n\nend", fd);
 
     close(fd);
+    save_with_defense(filename);
 
 }
 

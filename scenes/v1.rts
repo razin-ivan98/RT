@@ -1,36 +1,21 @@
+19F9F343035C326BC13654D9B624AC5F
 camera_init
 {
-	position = (3.0, 4.500, 0.0)
+	position = (0.0, 0.0, 0.0)
 	direction = (0.0, 0.0, 1.0)
 }
 
 new object
 {
 	type = sphere
-	position = (150002.727, 3.224, 11.399)
-	pos2 = (0.0, 0.0, 6.0)
-	pos3 = (0.0, 0.0, 6.0)
+	position = (-2.641, 2.45, 8.480)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
 	direction = (-0.577, -0.577, -0.577)
-	rotate = (-4.549, 2.490, 0.0)
+	rotate = (0.800, -0.50, 0.0)
 	radius = 1.0
-	color = 255
-	specular = 500.0
-	reflective = 0.0
-	angle = 0.0
-	texture-id = 2
-}
-
-new object
-{
-	type = plane
-	position = (0.142, -0.236, 11.399)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.229, 0.191, -0.954)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 0.0
-	color = 7479366
-	specular = 20.0
+	color = 152093745
+	specular = 60.0
 	reflective = 0.0
 	angle = 0.0
 	texture-id = -1
@@ -39,81 +24,49 @@ new object
 new object
 {
 	type = plane
-	position = (0.157, 0.619, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.805, -0.563, -0.182)
+	position = (0.0, -0.680, 7.0)
+	pos2 = (0.0, 1.0, 6.0)
+	pos3 = (1.0, 0.0, 6.0)
+	direction = (0.0, 0.955, -0.295)
 	rotate = (0.0, 0.0, 0.0)
-	radius = 0.0
-	color = 1484752
+	radius = 0.500
+	color = 13110814
 	specular = 20.0
-	reflective = 1.0
-	angle = 0.0
-	texture-id = -1
-}
-
-new object
-{
-	type = plane
-	position = (-0.430, -0.580, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.0, 1.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
-	color = 10358838
-	specular = 20.0
-	reflective = 1.0
-	angle = 0.0
-	texture-id = -1
-}
-
-new object
-{
-	type = plane
-	position = (0.603, 5.929, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.371, -0.889, -0.264)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 0.0
-	color = 3683702
-	specular = 20.0
-	reflective = 1.0
-	angle = 0.0
-	texture-id = -1
-}
-
-new object
-{
-	type = plane
-	position = (6.663, 0.389, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (-0.904, 0.190, 0.380)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 0.0
-	color = 2015510
-	specular = 20.0
-	reflective = 1.0
-	angle = 0.0
+	reflective = 0.0
+	angle = 2.0
 	texture-id = -1
 }
 
 new object
 {
 	type = cone
-	position = (5.437, 3.229, 11.599)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.362, 0.920, 0.146)
+	position = (2.362, 0.0, 8.269)
+	pos2 = (0.0, 1.0, 6.0)
+	pos3 = (1.0, 0.0, 6.0)
+	direction = (0.465, 0.453, 0.759)
 	rotate = (0.0, 0.0, 0.0)
-	radius = 1.300
-	color = 15259189
+	radius = 0.500
+	color = 1991400
 	specular = 20.0
 	reflective = 0.0
-	angle = 0.500
-	texture-id = 2
+	angle = 0.200
+	texture-id = 1
+}
+
+new object
+{
+	type = cylinder
+	position = (0.849, 0.466, 9.942)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-0.156, -0.181, -0.970)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	angle = 0.0
+	texture-id = 4
 }
 
 new light

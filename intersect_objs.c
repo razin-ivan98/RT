@@ -6,13 +6,14 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:41:13 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/05 17:31:12 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/08 21:30:16 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
 double ray_intersect_paraboloid(t_vector start, t_vector dir, t_obj *parab);
+double ray_intersect_triangle(t_vector start, t_vector dir, t_obj *triangle);
 
 static double	ray_intersect_plane(t_vector start, t_vector dir, t_obj *plane)
 {
@@ -111,5 +112,7 @@ double			ray_intersect_obj(t_vector start, t_vector dir, t_obj *obj)
 		return (ray_intersect_plane(start, dir, obj));
 	else if (obj->type == paraboloid)
 		return (ray_intersect_paraboloid(start, dir, obj));
+	else if (obj->type == triangle)
+		return (ray_intersect_triangle(start, dir, obj));
 	return (0.0);
 }

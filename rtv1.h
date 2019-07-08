@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/05 18:41:18 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/08 21:45:32 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define RTV1_H
 # include "math.h"
 # include <fcntl.h>
-# include "get_next_line.h"
+# include "get_next_line/get_next_line.h"
 # include <OpenCL/opencl.h>
 # include "libft/libft.h"
 # include "frameworks/SDL2.framework/Headers/SDL.h"
@@ -160,6 +160,8 @@ typedef struct	s_rtv1
 	int					guide_on;
 	int					arrow;
 
+	int					from_obj;
+
 	t_scene				scene;
 
 	cl_int				ret;
@@ -188,6 +190,7 @@ typedef struct	s_rtv1
 }				t_rtv1;
 
 void			read_scene(t_scene *scene, char *file_name);
+void			read_obj(t_rtv1 *rtv1, char *file_name);
 double			ft_atof(char *str);
 char			*ft_ftoa(double n);
 t_vector		read_vector(char *str);
@@ -209,6 +212,7 @@ double			scal_mult(t_vector a, t_vector b);
 double			vector_length(t_vector a);
 void			scene_init(t_rtv1 *rtv1, char *number);
 t_vector		vector_init(double x, double y, double z);
+t_vector	vector_cross(t_vector a, t_vector b);
 
 t_rgb			color_to_rgb(int color);
 int				rgb_to_color(t_rgb rgb);
@@ -249,9 +253,14 @@ void new_cylinder(t_rtv1 *rtv1);
 void new_cone(t_rtv1 *rtv1);
 void new_sphere(t_rtv1 *rtv1);
 
+void move_polygonal(double x, double y, double z, t_rtv1 *rtv1);
+void rot_polygonal(double x, double y, double z, t_rtv1 *rtv1);
 
 
+char *get_crypto_key(char *msg);
 
+
+int				check_crypto_key(char *file_name);
 
 
 

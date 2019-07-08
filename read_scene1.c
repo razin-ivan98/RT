@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:55:19 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/04 17:09:45 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/08 18:14:33 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,63 @@ void			read_line_set_scene(char *line, t_scene *scene)
 	}
 }
 
+void read_file_to_line(int fd, char **ret)
+{
+	char *line;
+
+	*ret = (char *)malloc(300000);
+	(*ret)[0] = 0;
+	while (get_next_line(fd, &line) > 0)
+	{
+		
+		ft_strcat(*ret, line);
+		ft_strcat(*ret, "\n");
+		free(line);
+	}
+	(*ret)[ft_strlen(*ret) - 1] = 0;
+}
+
+int				check_crypto_key(char *file_name)
+{
+	char *key;
+	char *key_from_file;
+	char *str;
+
+	int ret;
+	int fd;
+
+	if ((fd = open(file_name, O_RDONLY)) < 0)
+		err_exit();
+
+	
+
+
+	get_next_line(fd, &key_from_file);////////////////////////////
+
+
+	read_file_to_line(fd, &str);
+
+	key = get_crypto_key(str);
+	ret = ft_strcmp(key ,key_from_file);
+	free(key);
+	free(key_from_file);
+	free(str);
+	close(fd);
+	return (ret);
+}
+
 void			read_scene(t_scene *scene, char *file_name)
 {
 	int		ret;
 	int		fd;
 	char	*line;
 
+	
+
 	if ((fd = open(file_name, O_RDONLY)) < 0)
 		err_exit();
+	get_next_line(fd, &line);
+	free (line);
 	while ((ret = get_next_line(fd, &line)))
 	{
 		read_line_set_scene(line, scene);

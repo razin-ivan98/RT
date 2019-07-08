@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:00:58 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/13 19:15:37 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/08 21:28:56 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,16 @@ t_vector	vector_normalize(t_vector a)
 
 	c = vector_int_div(a, sqrt(scal_mult(a, a)));
 	return (c);
+}
+
+t_vector	vector_cross(t_vector a, t_vector b)
+{
+	t_vector	r;
+
+	r.x = a.y * b.z - a.z * b.y;
+	r.y = a.z * b.x - a.x * b.z;
+	r.z = a.x * b.y - a.y * b.x;
+	return (r);
 }
 
 t_vector rot(t_vector P, t_vector angles)

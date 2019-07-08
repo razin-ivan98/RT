@@ -1182,7 +1182,7 @@ inline void recalc_rgb(t_rgb *ret, t_rgb *colorr, double intensity, double spec_
 
 }
 
-int get_index_by_id(t_cl_scene *scene, id)
+int get_index_by_id(t_cl_scene *scene, int id)
 {
 	int ret;
 	int i = 0;

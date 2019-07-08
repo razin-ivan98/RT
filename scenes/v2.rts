@@ -1,3 +1,4 @@
+5F354D1468D25CD6565A7FC7D61FFF3B
 camera_init
 {
 	position = (0.0, 0.0, -3.0)
@@ -8,13 +9,16 @@ new object
 {
 	type = cylinder
 	position = (0.0, 0.0, 4.0)
-	direction = (0.0, 1.0, -0.0)
-	rotate = (-0.0, 0.0, 0.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
 	color = 65280
 	specular = 0.0
 	reflective = 0.0
 	angle = 0.0
+	texture-id = 0
 }
 
 new light
@@ -22,14 +26,14 @@ new light
 	type = point
 	intensity = 0.300
 	position = (2.0, 1.0, 2.399)
-	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+	direction = (-0.577, -0.577, -0.577)
 }
 new light
 {
 	type = ambient
 	intensity = 0.100
 	position = (0.0, 0.0, 0.0)
-	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+	direction = (-0.577, -0.577, -0.577)
 }
 
 

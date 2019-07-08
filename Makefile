@@ -6,7 +6,7 @@
 #    By: chorange <chorange@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/18 18:53:25 by chorange          #+#    #+#              #
-#    Updated: 2019/07/05 18:39:37 by chorange         ###   ########.fr        #
+#    Updated: 2019/07/08 21:02:10 by chorange         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,8 +15,9 @@ NAME = RTv1
 FLAGS = #-Wextra -Wall -Werror
 
 OBJECTS = main.o init.o vect_math1.o vect_math2.o color.o read_scene1.o atof.o\
-	get_next_line.o key_utils.o camera_dir_setup.o intersect_objs2.o\
-	transform.o	intersect_objs.o exit.o read_scene2.o  save.o new_object.o 
+	get_next_line/get_next_line.o key_utils.o camera_dir_setup.o intersect_objs2.o\
+	transform.o	intersect_objs.o exit.o read_scene2.o  save.o new_object.o \
+	md5.o itoa_16.o read_obj.o
 
 LIBS = -L./libft -lft -L./LIBUI/ -lui -lm -framework OpenGL\
 	-framework AppKit -framework OpenCL -framework OpenGL
