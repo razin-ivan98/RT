@@ -1220,6 +1220,25 @@ int is_intersect_arrow(t_cl_scene *cl_scene, double3 start, double3 dir)
 		return (rgb_to_color(cl_scene->arrows[index].rgb));
 }
 
+double3 refracted_ray(double3 dir, double3 N)
+{
+	double alpha;
+	double beta;
+	double3 Lp;
+	double3 Ln;
+	double3 Rn;
+	double3 R;
+
+	alpha = acos(dot(dir, N) / length(dir) * length(N));
+	beta = asin(sin(alpha) / 1.2);
+	Ln = N * dot(N, -dir);
+	Lp = -dir - Ln;
+	Rn = (tan(beta) / tan(alpha)) * -Lp;
+	R = -(Rn + Ln);
+	return R;
+}
+
+
 int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
 {
 	t_cl_obj closest_obj;
@@ -1252,7 +1271,17 @@ int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __glob
 
 			start = start + dir * closest_t;
 
-			
+			///////////   <миша намашнял>
+
+			if (closest_obj.type == plane)
+			{
+				dir = refracted_ray(dir, get_normal(start, closest_obj));
+				depth--;
+				continue;
+			}
+
+
+			///////////   </миша намашнял>
 
 			colorr = get_rgb_from_texture(start, closest_obj, data);
 			//return (rgb_to_color(colorr));
@@ -1261,7 +1290,7 @@ int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __glob
 				N *= -1;
 
 			intensity = compute_lighting(start, N, -dir, closest_obj, cl_scene, &spec_intensity);
-			recalc_rgb(&ret, &colorr, intensity, spec_intensity, coeff, 1.0 - closest_obj.reflective/* - closest_obj.transparency*/);
+			recalc_rgb(&ret, &colorr, intensity, spec_intensity, coeff, 1.0 - (closest_obj.reflective)/* - closest_obj.transparency*/);
 			coeff *= closest_obj.reflective;
 		/*	if (closest_obj.transparency > 0.0)
 			{
@@ -1269,7 +1298,7 @@ int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __glob
 				recalc_rgb(&ret, &ref, 1.0, 1.0, coeff, closest_obj.transparency);
 			}*/
 			depth--;
-			if (closest_obj.reflective <= 0.0)
+			if (closest_obj.reflective > 0.0)
 				break;
 			dir = reflect_ray((-1.0) * dir, N);
 		}

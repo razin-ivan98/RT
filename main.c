@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/07/08 20:35:49 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/10 16:00:59 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ int			main(int ac, char **av)
 		ft_putendl("Argument is not valid.");
 		err_exit();
 	}
-	if ((ac > 2 && (ft_strcmp(av[2], "obj") && ft_strcmp(av[2], "obj")) && (ft_strcmp(av[2], "admin") && ft_strcmp(av[2], "admin"))) || ac == 2)
+	if ((ac > 2 && (ft_strcmp(av[2], "obj") && ft_strcmp(av[3], "obj")) && (ft_strcmp(av[2], "admin") && ft_strcmp(av[3], "admin"))) || ac == 2)
 	{
 		if (check_crypto_key(av[1]))
 		{
@@ -148,7 +148,7 @@ int			main(int ac, char **av)
 		}
 	}
 	rtv1.from_obj = 0;
-	if (ac > 2 && (!ft_strcmp(av[2], "obj") || !ft_strcmp(av[2], "obj")))
+	if (ac > 2 && (!ft_strcmp(av[2], "obj") || !ft_strcmp(av[3], "obj")))
 	{
 		rtv1.from_obj = 1;
 	}

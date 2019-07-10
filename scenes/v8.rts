@@ -28,7 +28,7 @@ new object
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (-0.577, -0.577, -0.577)
-	rotate = (2.250, 0.350, 0.0)
+	rotate = (2.25, 0.350, 0.0)
 	radius = 1.0
 	color = 255
 	specular = 500.0

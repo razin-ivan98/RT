@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/08 20:26:43 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/10 16:27:33 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,13 @@ static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
 		NULL, NULL, NULL);
 	//	printf("%d", rtv1->ret);
 
-/*	size_t l_size;
+	size_t l_size;
 	char *logg = NULL;
 		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &l_size);
 		logg = malloc(l_size);
 		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, l_size, logg, NULL);
 		puts(logg);
-	free(logg);*/
+	free(logg);
 //	free(source_str);
 }
 
