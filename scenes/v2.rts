@@ -15,6 +15,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
 	color = 65280
+	refractive = 1.0
 	specular = 0.0
 	reflective = 0.0
 	angle = 0.0
@@ -24,14 +25,14 @@ new object
 new light
 {
 	type = point
-	intensity = 0.300
+	intensity = 0.700
 	position = (2.0, 1.0, 2.399)
 	direction = (-0.577, -0.577, -0.577)
 }
 new light
 {
 	type = ambient
-	intensity = 0.100
+	intensity = 0.300
 	position = (0.0, 0.0, 0.0)
 	direction = (-0.577, -0.577, -0.577)
 }

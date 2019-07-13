@@ -3,8 +3,7 @@
 #define VW 1
 #define VH 1
 #define DEPTH 5
-#define UPPER_BOUND 99999.9
-
+#define UPPER_BOUND 9999999999999999.9
 
 typedef struct			s_quad
 {
@@ -66,6 +65,8 @@ typedef struct s_obj
 	double specular;
 	double reflective;
 	double transparency;
+	double refractive;
+	double smoothness;
 	int tex;
 
 	//struct s_obj *next;
@@ -79,6 +80,7 @@ typedef struct s_light
 	double intensity;
 	t_vector center;
 	t_vector dir;
+	int			id;
 
 //	struct s_light *next;
 }				t_light;
@@ -100,7 +102,10 @@ typedef struct s_scene
 	t_light lights[100];
 	t_obj objs[100];
 	int shadows_on;
-		int			arrows_on;
+	int		arrows_on;
+	int		advanced;
+	int		soft;
+	double			rands[500];
 }		t_scene;
 
 typedef struct s_cl_obj
@@ -109,10 +114,12 @@ typedef struct s_cl_obj
 	int id;
 	double angle;
 	double radius;
-	t_rgb rgb;
+	int3 rgb;
 	double specular;
 	double reflective;
 	double transparency;
+	double refractive;
+	double smoothness;
 	int tex;
 	
 	double3 center;
@@ -147,43 +154,61 @@ typedef struct s_cl_scene
 	t_cl_light lights[100];
 	t_cl_obj objs[100];
 	int shadows_on;
-		int			arrows_on;
+	int			arrows_on;
+	int			advanced;
+	double			rands[500];
+	int		soft;
+	int index;
 }		t_cl_scene;
 
-t_rgb color_to_rgb(int color)
+int3 color_to_rgb(int color)
 {
-	t_rgb rgb;
+	int3 rgb;
 
-	rgb.r = color >> 16;
-	rgb.g = (color & 0x00ff00) >> 8;
-	rgb.b = color & 0x0000ff;
+	rgb.x = color >> 16;
+	rgb.y = (color & 0x00ff00) >> 8;
+	rgb.z = color & 0x0000ff;
 
 	return (rgb);
 }
 
-int rgb_to_color(t_rgb rgb)
+int rgb_to_color(int3 rgb)
 {
 	int color;
 
-	color = rgb.r * 0x010000 + rgb.g * 0x000100 + rgb.b;
+	color = rgb.x * 0x010000 + rgb.y * 0x000100 + rgb.z;
 
 	return (color);
 }
 
-void	put_point_to_image(__global char *image_data, int x, int y, int color)
+void	plus_pixels(__global unsigned char *image_data, int x, int y, int3 color)
+{
+	int	index = 0;
+	char tmp;
+
+	{
+		index = CW * y * 4 + x * 4;
+
+        image_data[index] = (unsigned char)((double)image_data[index] * 0.94 + (double)color.z * 0.06);
+        image_data[index + 2] = (unsigned char)((double)image_data[index + 2] * 0.94 + (double)color.x * 0.06);
+		image_data[index + 1] =  (unsigned char)((double)image_data[index + 1] * 0.94 + (double)color.y * 0.06);
+
+	}
+
+}
+
+void	put_point_to_image(__global char *image_data, int x, int y, int3 color)
 {
 	int	index = 0;
 
-	if (x < 0 || y < 0 || x > CW - 1 || y > CH - 1)
-		return ;
-	else
 	{
 		index = CW * y * 4 + x * 4;
-        image_data[index] = color & 0x0000ff;
-		image_data[index + 2] = color >> 16;
-		image_data[index + 1] = (color & 0x00ff00) >> 8;
+        image_data[index] = color.z;
+		image_data[index + 2] = color.x;
+		image_data[index + 1] = color.y;
 	}
 }
+
 
 double3 vector_to_double3(t_vector a)
 {
@@ -257,29 +282,6 @@ double3	rotate_view(double3 point, double alpha, double beta)
 	return (point);
 }
 
-/////////////////////
-/*
-double ray_intersect_triangle(double3 start, double3 dir, t_cl_obj *triangle)
-{
-	double3 normal, x, v[3], c[3], hitpoint;
-	double d, t;
-
-	v[0] = triangle->dir - triangle->center;
-	v[1] = triangle->rot - triangle->dir;
-	v[2] = triangle->center - triangle->rot;
-	normal = normalize(cross(v[0], v[1]));
-	x = start - triangle->center;
-	if ((d = dot(dir,normal)) < 0.00001 && d > -0.00001)
-		return (0);
-	t = -dot(x, normal) / d;
-	hitpoint = t * dir + start;
-	c[0] = hitpoint - triangle->center;
-	c[1] = hitpoint - triangle->dir;
-	c[2] = hitpoint - triangle->rot;
-	if(length(cross(v[0],c[0]))+length(cross(v[1],c[1]))+length(cross(v[2],c[2])) < length(cross(v[1], v[2])) + 0.001)
-		return (t);
-	return (0);
-}*/
 
 
 
@@ -316,196 +318,7 @@ double ray_intersect_triangle(double3 start, double3 dir, t_cl_obj *triangle)
 }
 /////////////////
 
-double ray_intersect_paraboloid(double3 start, double3 dir, t_cl_obj *parab)
-{
-	t_quad		q;
-	double3 	x, hitpoint;
-	double dist ,u , z, len;
-	double zeroThreshold = 0.0001;
 
-	x = start - parab->center;
-
-	u = dot(dir, parab->dir);
-	z = dot(x, parab->dir);
-
-	q.a = 2.f * (dot(dir, dir) - u * u);
-	q.b = 2.f * (dot(dir, x) - u * (z + 2.f *  parab->radius));
-	q.c = dot(x, x) - z * (z + 4.f *  parab->radius);
-	if ((q.d = q.b * q.b - 2.f * q.a * q.c) >= 0.0)
-	{
-		q.d = sqrt(q.d);
-		q.res = (-q.b - q.d) / q.a;
-		if (q.res > zeroThreshold) {
-			hitpoint = q.res * dir + x;
-			len = dot(hitpoint, parab->dir);
-			if (/*len < parab->angle && */len > -zeroThreshold)
-				return (q.res);
-		}
-		q.res = (-q.b + q.d) / q.a;
-		if (q.res > zeroThreshold) {
-			hitpoint = q.res * dir + x;
-			len = dot(hitpoint, parab->dir);
-			if (len < parab->angle && len > -zeroThreshold)
-				return (q.res);
-		}
-	}
-	return (0);
-
-}
-
-///////////////
-/*
-int check_sphere(double3 start, double3 dir, double radius, double3 pos)
-{
-	t_quad		q;
-	double3 	x;
-	double zeroThreshold = 0.00001;
-
-	x = start - pos;
-	q.b = 2.0f * dot(dir, x);
-	q.c = dot(x, x) - radius * radius;
-	if ((q.d = (q.b * q.b - 4.0f * q.c)) < zeroThreshold)
-		return (0);
-	return (1);
-}
-void positive_discriminant(double Q, double2 koefs, double *solve, double b)
-{
-	double alpha, betha, ntmp;
-
-	ntmp = -koefs[1] / 3.f;
-		alpha = cbrt(-koefs[0] / 2.f + sqrt(Q));
-		betha = -koefs[1] / (3.f * alpha);
-		*solve = alpha + betha - b;
-}
-
-void negative_discriminant(double Q, double2 koefs, double *solve, double b)
-{
-	double cosphi, tmp, ntmp, phi;
-
-	tmp = -3.f / koefs.y;
-	ntmp = -koefs.y / 3.f;
-	cosphi = -koefs.x * 0.5f * sqrt(tmp * tmp * tmp);
-	phi = acos(cosphi);
-	*solve = 2.f * sqrt(ntmp) * cos(phi / 3.f) - b;
-}
-void fourth_degree_equation_solver(double4 koefs, double2 *solve)
-{
-	double3 ferrari_koefs, cubic_resol_koefs;
-	double2 cubic_two_params_koefs;
-	double a2, a3, a4, p2, b2, Q, cubic_solve;
-	t_quad q;
-
-	a2 = koefs[3] * koefs[3];
-	a3 = a2 * koefs[3];
-	a4 = a2 * a2;
-	//y4+py2+qy+r=0
-	ferrari_koefs[2] = koefs[2] - 0.375f * a2;
-	ferrari_koefs[1] = 0.125f * a3 - 0.5f * koefs[2] * koefs[3] + koefs[1];
-	ferrari_koefs[0] = (-0.01171875f) * a4 + 0.0625f * koefs[2] * a2 - 0.25f * koefs[1] * koefs[3] + koefs[0];
-	if (ferrari_koefs[1] * ferrari_koefs[1] < 1e-4)
-	{
-		q.b = ferrari_koefs[2];
-		q.c = ferrari_koefs[0];
-		q.d = q.b * q.b - 4.f * q.c + 1e-4;
-		if (q.d >= 0.f)
-		{
-			q.d = sqrt(q.d);
-			(*solve)[0] = (-q.b - q.d) / 2.f;
-			(*solve)[1] = (-q.b + q.d) / 2.f;
-			if ((*solve)[0] >= 0.f)
-				(*solve)[0] = (q.res = -sqrt((*solve)[0]) - koefs[3] / 4.f) > 0.f ? q.res : sqrt((*solve)[0]) - koefs[3] / 4.f;
-			if ((*solve)[1] >= 0.f)
-				(*solve)[1] = (q.res = -sqrt((*solve)[1]) - koefs[3] / 4.f) > 0.f ? q.res : sqrt((*solve)[1]) - koefs[3] / 4.f;
-		}
-		return;
-	}
-	//y3+py2+qy+r=0
-	cubic_resol_koefs[2] = (-0.5f) * ferrari_koefs[2];
-	cubic_resol_koefs[1] = -ferrari_koefs[0];
-	cubic_resol_koefs[0] = (-0.125f) * ferrari_koefs[1] * ferrari_koefs[1] + 0.5f * ferrari_koefs[0] * ferrari_koefs[2];
-	p2 = cubic_resol_koefs[2] * cubic_resol_koefs[2];
-	//y3+py+q=0
-	cubic_two_params_koefs[1] = cubic_resol_koefs[1] - p2 / 3.f;
-	cubic_two_params_koefs[0] = cubic_resol_koefs[0] + 2.f * p2  * cubic_resol_koefs[2] / 27.f - cubic_resol_koefs[2] * cubic_resol_koefs[1] / 3.f;
-	//y = z+t, 3zt+p = 0
-	b2 = cubic_two_params_koefs[0] * cubic_two_params_koefs[0];
-	Q = cubic_two_params_koefs[1] * cubic_two_params_koefs[1] * cubic_two_params_koefs[1] / 27.f + cubic_two_params_koefs[0] * cubic_two_params_koefs[0] / 4.f;
-	if (Q > 0)
-		positive_discriminant(Q, cubic_two_params_koefs, &cubic_solve, cubic_resol_koefs[2] / 3.f);
-	else
-		negative_discriminant(Q, cubic_two_params_koefs, &cubic_solve, cubic_resol_koefs[2] / 3.f);
-	if ((q.b = 2.f * cubic_solve - ferrari_koefs[2]) > 0.f ) {
-		q.a = q.b;
-		q.b = -sqrt(q.b);
-		q.c = ferrari_koefs[1] / (-2.f * q.b) + cubic_solve;
-		q.d = q.a - 4.f * q.c + 1e-4;
-		if (q.d >= 0.f)
-		{
-			q.d = sqrt(q.d);
-			(*solve)[0] =
-					(q.res = (-q.b - q.d) / 2.f - koefs[3] / 4.f) > 0.f
-					? q.res : (-q.b + q.d) / 2.f - koefs[3] / 4.f;
-		}
-		q.b = -q.b;
-		q.c = ferrari_koefs[1] / (-2.f * q.b) + cubic_solve;
-		q.d = q.a - 4.f * q.c + 1e-4;
-		if (q.d >= 0.f)
-		{
-			q.d = sqrt(q.d);
-			(*solve)[1] =
-					(q.res = (-q.b - q.d) / 2.f - koefs[3] / 4.f) > 0.f
-					? q.res : (-q.b + q.d) / 2.f - koefs[3] / 4.f;
-		}
-	}
-}
-
-double ray_intersect_torus(double3 start, double3 dir, t_cl_obj *torus)
-{
-	double3    x;
-	double4 equation_koefs, dots,qq;
-	double2 solve = (double2){-1.f, -1.f};
-	double R2, r2, Rr, dist;
-
-	Rr = torus->angle + torus->radius + 1;
-	if (!check_sphere(start, dir, Rr, torus->center))
-		return (0);
-	x = start - torus->center;
-	dist = length(x) - Rr;
-	if (dist > 0.f)
-		x += dir * dist;
-	else
-		dist = 0.f;
-	R2 = torus->angle * torus->angle;
-	r2 = torus->radius * torus->radius;
-	//ax4+bx3+cx2+dx1+e
-	//a == 1
-	dots[0] = dot(x, torus->dir);
-	dots[1] = dot(dir, torus->dir);
-	dots[2] = dot(x, x);
-	dots[3] = dot(x, dir);
-	qq[0] = 1.0f - dots[1] * dots[1];
-	qq[1] = 2.0f * (dots[3] - dots[0] * dots[1]);
-	qq[2] = dots[2] - dots[0] * dots[0];
-	qq[3] = dots[2] + R2 - r2;
-	equation_koefs[3] = 4.0f * dots[3];
-	equation_koefs[2] = 2.0f * qq[3] + equation_koefs[3] * equation_koefs[3] * 0.25f - 4.0f * R2 * qq[0];
-	equation_koefs[1] = equation_koefs[3] * qq[3] - 4.0f * R2 * qq[1];
-	equation_koefs[0] = qq[3] * qq[3] - 4.0f * R2 * qq[2];
-	fourth_degree_equation_solver(equation_koefs, &solve);
-
-	if(solve[0] > -0.00001)
-	{
-		if(solve[1] > 0)
-			return (solve[0] < solve[1] ? solve[0] + dist : solve[1] + dist);
-		else
-			return (solve[0] + dist);
-	}
-	else if (solve[1] > -0.00001)
-		return (solve[1] + dist);
-	else
-		return(0);
-}*/
-///////////////////
 double ray_intersect_plane(double3 start, double3 dir, t_cl_obj *plane)
 {
 	double zeroThreshold = 0.0001;
@@ -636,10 +449,6 @@ double ray_intersect_obj(double3 start, double3 dir, t_cl_obj *obj)
 		return (ray_intersect_cylinder(start, dir, obj));
 	else if (obj->type == plane)
 		return (ray_intersect_plane(start, dir, obj));
-	/*else if (obj->type == torus)
-		return (ray_intersect_torus(start, dir, obj));*/
-	else if (obj->type == paraboloid)
-		return (ray_intersect_paraboloid(start, dir, obj));
 	else if (obj->type == triangle)
 		return (ray_intersect_triangle(start, dir, obj));
 }
@@ -675,53 +484,38 @@ double3 vector_project(double3 a, double3 b)
 	return (project);
 }
 
-double3 get_normal(double3 point, t_cl_obj obj)
+double3 get_normal(double3 point, t_cl_obj *obj)
 {
 	double3 normal;
 	double3 project;
 	double k;
 
-	if (obj.type == sphere)
+	if (obj->type == sphere)
 	{
-		normal = point - obj.center;
+		normal = point - obj->center;
 		normal = normalize(normal);
 	}
-	else if (obj.type == cylinder)
+	else if (obj->type == cylinder)
 	{
-		normal = point - obj.center;
-		project = vector_project(normal, obj.dir);
+		normal = point - obj->center;
+		project = vector_project(normal, obj->dir);
 		normal = normalize(normal - project);
 	}
-	else if (obj.type == plane)
-		normal = obj.dir;
-	else if (obj.type == cone)
+	else if (obj->type == plane)
+		normal = obj->dir;
+	else if (obj->type == cone)
 	{
-		normal = point - obj.center;
-		project = vector_project(normal, obj.dir);
-		k = 1 + tan(obj.angle) * tan(obj.angle);
+		normal = point - obj->center;
+		project = vector_project(normal, obj->dir);
+		k = 1 + tan(obj->angle) * tan(obj->angle);
 		project = project * k;
 		normal = normalize(normal - project);
 	}
-	else if (obj.type == triangle)
+	else if (obj->type == triangle)
 	{
-/*
-		point -= obj.center;
-		normal = point - dot(point, obj.dir) * obj.dir;
-		normal = normalize(normal);
-		normal = point - normal * obj.angle;
-		normal =  (normalize(normal));*/
-
-
-		normal = (normalize(cross(obj.p2 - obj.center, obj.p3 - obj.p2)));
+		normal = (normalize(cross(obj->p2 - obj->center, obj->p3 - obj->p2)));
 	}
 
-	else if (obj.type == paraboloid)
-	{
-		point = point - obj.center;
-		k = dot(point, obj.dir);
-		normal = point - obj.dir * (k + obj.radius);
-		normal = normalize(normal);
-	}
 	
 	return (normal);
 }
@@ -731,56 +525,115 @@ double3 reflect_ray(double3 R, double3 N)
 	return (N * (2 * dot(N, R)) - R);
 }
 
-double compute_lighting(double3 P, double3 N, double3 V, t_cl_obj obj, t_cl_scene *cl_scene, double *spec_intensity)
+double r_rand(t_cl_scene *scene)
+{
+	double ret;
+
+	ret = scene->rands[scene->index];
+	scene->index += get_global_id(0) * get_global_id(0) * get_global_id(0) % 100 + 1;
+	scene->index %= 500;
+	/*if (scene->index == 500)
+		scene->index = 0;*/
+	return (ret);
+}
+
+double3 get_rand_ray_to_light(t_cl_scene *scene, double3 center, double3 P)
+{
+	double3 ret;
+
+	ret.x = r_rand(scene);
+	ret.y = r_rand(scene);
+	ret.z = r_rand(scene);
+	
+	ret = ret / length(ret) * 1.0;
+	ret += center;
+	ret -= P;
+	return (ret);
+}
+
+double compute_lighting(double3 P, double3 N, double3 V, t_cl_obj *obj, t_cl_scene *cl_scene, double *spec_intensity, int mode)
 {
 	double intensity = 0.0;
 
 	double3 L;
+	double iter = mode ? 5.0 : 4.0;
 	double t;
 	double shadow_t;
 	t_cl_obj *shadow_obj = 0;
 
-	if (obj.type == arrow)
+	if (obj->type == arrow)
 		return (1.0);
 
 	for (int i = 0; i < cl_scene->c_lights; i++)
 	{
-		shadow_t = UPPER_BOUND;
-		shadow_obj = 0;
-		int j = 0;
+		
 		if (cl_scene->lights[i].type == ambient)
 			intensity += cl_scene->lights[i].intensity;
 		else
 		{
-			if (cl_scene->lights[i].type == point)
-				L = cl_scene->lights[i].center - P;
-			else
-				L = cl_scene->lights[i].dir;
+			/*if (cl_scene->lights[i].type == point)
+				L = cl_scene->lights[i].center - P;*/
+			/*else
+				L = cl_scene->lights[i].dir;*/
+			double srednyaya_int = 1.0;
 			if (cl_scene->shadows_on == 1)
 			{
-				while (j < cl_scene->c_objs)
-				{
-					t = ray_intersect_obj(P, L, &(cl_scene->objs[j]));
-					if (t > 0.000001 && ((cl_scene->lights[i].type == point && length(L) > length(L * t)) || (cl_scene->lights[i].type != point)))
+
+				///
+				
+				//if (cl_scene->advanced)
+				if (cl_scene->soft)	
+					for (int q = 0; q < (int)iter; q++)
 					{
-						shadow_t = t;
-						shadow_obj = &(cl_scene->objs[j]);
+						L = get_rand_ray_to_light(cl_scene, cl_scene->lights[i].center, P);
+						shadow_t = UPPER_BOUND;
+						shadow_obj = 0;
+						int j = 0;
+						while (j < cl_scene->c_objs)
+						{
+							t = ray_intersect_obj(P, L, &(cl_scene->objs[j]));
+							if (t > 0.000001 && ((cl_scene->lights[i].type == point && length(L) > length(L * t)) || (cl_scene->lights[i].type != point)))
+							{
+								shadow_t = t;
+								shadow_obj = &(cl_scene->objs[j]);
+							}
+							j++;
+						}
+						if (shadow_obj)
+							srednyaya_int -= 1.0/iter;
 					}
-					j++;
+				else
+				{
+						L = cl_scene->lights[i].center - P;
+						shadow_t = UPPER_BOUND;
+						shadow_obj = 0;
+						int j = 0;
+						while (j < cl_scene->c_objs)
+						{
+							t = ray_intersect_obj(P, L, &(cl_scene->objs[j]));
+							if (t > 0.000001 && ((cl_scene->lights[i].type == point && length(L) > length(L * t)) || (cl_scene->lights[i].type != point)))
+							{
+								shadow_t = t;
+								shadow_obj = &(cl_scene->objs[j]);
+							}
+							j++;
+						}
+						if (shadow_obj)
+							srednyaya_int -= 1.0;
 				}
-				if (shadow_obj)
-					continue ;
+
+						///
 			}
 			double n_dot_l = dot(N, L);
 			if (n_dot_l > -0.0)
-				intensity += cl_scene->lights[i].intensity * n_dot_l / (length(L));
+				intensity += srednyaya_int * cl_scene->lights[i].intensity * n_dot_l / (length(L));
 
-			if (obj.specular > 0.0)
+			if (obj->specular > 0.0)
 			{
 				double3 R = reflect_ray(L, N);
 				double r_dot_v = dot(R, V);
 				if (r_dot_v > -0.0)
-					*spec_intensity += cl_scene->lights[i].intensity * pow(r_dot_v / (length(R) * length(V)), obj.specular);
+					*spec_intensity += cl_scene->lights[i].intensity * pow(r_dot_v / (length(R) * length(V)), obj->specular);
 			}
 		}
 	}
@@ -794,14 +647,14 @@ double get_angle_bet_vecs(double3 a, double3 b)
 	return(acos(dot(a, b)/length(a)/length(b)));
 }
 
-t_rgb get_rgb_from_texture_sphere(double3 P, t_cl_obj obj, __global char* data[5])
+int3 get_rgb_from_texture_sphere(double3 P, t_cl_obj *obj, __global char* data[5])
 {
-	t_rgb ret;
+	int3 ret;
 
 
-	P = P - obj.center;
+	P = P - obj->center;
 
-	P = rot(P, obj.rot);
+	P = rot(P, obj->rot);
 
 	double3 temp = P;
 
@@ -816,35 +669,31 @@ t_rgb get_rgb_from_texture_sphere(double3 P, t_cl_obj obj, __global char* data[5
 
 	int tmp;
 
-	tmp = data[obj.tex][(int)(512.0 + 1024.0 * beta) * 3 * 1024 + (int)(512.0 + 1024.0 * alpha) * 3 + 2];
+	tmp = data[obj->tex][(int)(512.0 + 1024.0 * beta) * 3 * 1024 + (int)(512.0 + 1024.0 * alpha) * 3 + 2];
 
 	if (tmp < 0)
 		tmp += 255;
 	else if (tmp >= 255)
 		tmp -= 255;
 
-	ret.r = tmp;
+	ret.x = tmp;
 
-	tmp = data[obj.tex][(int)(512.0 + 1024.0 * beta) * 3 * 1024 + (int)(512.0 + 1024.0 * alpha) * 3 + 1];
-
-	if (tmp < 0)
-		tmp += 255;
-	else if (tmp >= 255)
-		tmp -= 255;
-
-	ret.g = tmp;
-
-	tmp = data[obj.tex][(int)(512.0 + 1024.0 * beta) * 3 * 1024 + (int)(512.0 + 1024.0 * alpha) * 3];
+	tmp = data[obj->tex][(int)(512.0 + 1024.0 * beta) * 3 * 1024 + (int)(512.0 + 1024.0 * alpha) * 3 + 1];
 
 	if (tmp < 0)
 		tmp += 255;
 	else if (tmp >= 255)
 		tmp -= 255;
-	ret.b = tmp;
 
+	ret.y = tmp;
 
+	tmp = data[obj->tex][(int)(512.0 + 1024.0 * beta) * 3 * 1024 + (int)(512.0 + 1024.0 * alpha) * 3];
 
-
+	if (tmp < 0)
+		tmp += 255;
+	else if (tmp >= 255)
+		tmp -= 255;
+	ret.z = tmp;
 
 	return(ret);
 }
@@ -861,19 +710,19 @@ double3	vec3_mul(double3 va, double3 vb)
 	return (v);
 }
 
-t_rgb	get_rgb_from_texture_plane(double3 P, t_cl_obj obj, __global char* data[5])
+int3	get_rgb_from_texture_plane(double3 P, t_cl_obj *obj, __global char* data[5])
 {
 	float	u;
 	float	v;
 	double3	u_axis;
 	double3	v_axis;
 
-	t_rgb ret;
+	int3 ret;
 
-	u_axis = (double3){obj.dir.y, obj.dir.z, -obj.dir.x};
+	u_axis = (double3){obj->dir.y, obj->dir.z, -obj->dir.x};
 	//if (obj->mat.texture.rotation != 0)
 	//	vec3_rotate(&u_axis, vec3_fmul(obj->dir, obj->mat.texture.rotation));
-	v_axis = cross(u_axis, obj.dir);
+	v_axis = cross(u_axis, obj->dir);
 	u = dot(P, u_axis) * 1.0/*obj->mat.texture.scale*/;
 	v = dot(P, v_axis) * 1.0/*obj->mat.texture.scale*/;
 	u = u - floor(u);
@@ -886,31 +735,31 @@ t_rgb	get_rgb_from_texture_plane(double3 P, t_cl_obj obj, __global char* data[5]
 
 	int tmp;
 
-	tmp = data[obj.tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3 + 2];
+	tmp = data[obj->tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3 + 2];
 
 	if (tmp < 0)
 		tmp += 255;
 	else if (tmp >= 255)
 		tmp -= 255;
 
-	ret.r = tmp;
+	ret.x = tmp;
 
-	tmp = data[obj.tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3 + 1];
-
-	if (tmp < 0)
-		tmp += 255;
-	else if (tmp >= 255)
-		tmp -= 255;
-
-	ret.g = tmp;
-
-	tmp = data[obj.tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3];
+	tmp = data[obj->tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3 + 1];
 
 	if (tmp < 0)
 		tmp += 255;
 	else if (tmp >= 255)
 		tmp -= 255;
-	ret.b = tmp;
+
+	ret.y = tmp;
+
+	tmp = data[obj->tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3];
+
+	if (tmp < 0)
+		tmp += 255;
+	else if (tmp >= 255)
+		tmp -= 255;
+	ret.z = tmp;
 
 
 	return (ret);
@@ -959,23 +808,23 @@ double	angle(double3 a, double3 b)
 
 }
 
-double3 get_default_cylinder_P(double3 P, t_cl_obj obj)
+double3 get_default_cylinder_P(double3 P, t_cl_obj *obj)
 {
-	if (obj.dir.y == 1.0)
+	if (obj->dir.y == 1.0)
 		return(P);
-	if (obj.dir.x == 1.0)
+	if (obj->dir.x == 1.0)
 		return(rot(P, (double3){0.0, 0.0, M_PI_2}));
-	if (obj.dir.x == -1.0)
+	if (obj->dir.x == -1.0)
 		return(rot(P, (double3){0.0, 0.0, -M_PI_2}));
-	if (obj.dir.y == -1.0)
+	if (obj->dir.y == -1.0)
 		return(rot(P, (double3){M_PI, 0.0, 0.0}));
-	if (obj.dir.z == 1.0)
+	if (obj->dir.z == 1.0)
 		return(rot(P, (double3){M_PI_2, 0.0, 0.0}));
-	if (obj.dir.z == -1.0)
+	if (obj->dir.z == -1.0)
 		return(rot(P, (double3){-M_PI_2, 0.0, 0.0}));
 	
-	double z = atan2(obj.dir.x, obj.dir.y);
-	double y = atan2(obj.dir.x, obj.dir.z);
+	double z = atan2(obj->dir.x, obj->dir.y);
+	double y = atan2(obj->dir.x, obj->dir.z);
 
 	double3 ret;
 	
@@ -985,73 +834,14 @@ double3 get_default_cylinder_P(double3 P, t_cl_obj obj)
 		return(ret);
 }		
 
-double3		ft_vec3vop_r(double3 a, double3 b, char c)
+double3		ft_vec(double3 a, double3 b)
 {
 	double3	to_vec3;
 
-	//ft_bzero(&to_vec3, sizeof(t_vec3));
-	if (c == '+')
-	{
-		to_vec3.x = a.x + b.x;
-		to_vec3.y = a.y + b.y;
-		to_vec3.z = a.z + b.z;
-	}
-	else if (c == '-')
-	{
-		to_vec3.x = a.x - b.x;
-		to_vec3.y = a.y - b.y;
-		to_vec3.z = a.z - b.z;
-	}
-	else if (c == '/')
-	{
-		to_vec3.x = a.x / b.x;
-		to_vec3.y = a.y / b.y;
-		to_vec3.z = a.z / b.z;
-	}
-	else if (c == '*')
-	{
-		to_vec3.x = a.x * b.x;
-		to_vec3.y = a.y * b.y;
-		to_vec3.z = a.z * b.z;
-	}
-	else if (c == 'c')
-	{
+
 		to_vec3.x = a.y * b.z - a.z * b.y;
 		to_vec3.y = a.z * b.x - a.x * b.z;
 		to_vec3.z = a.x * b.y - a.y * b.x;
-	}
-	return (to_vec3);
-}
-
-double3		ft_vec3sop_r(double3 from_vec3, double x, char c)
-{
-	double3 to_vec3	;
-
-	//ft_bzero(&to_vec3, sizeof(t_vec3));
-	if (c == '+')
-	{
-		to_vec3.x = from_vec3.x + x;
-		to_vec3.y = from_vec3.y + x;
-		to_vec3.z = from_vec3.z + x;
-	}
-	else if (c == '*')
-	{
-		to_vec3.x = from_vec3.x * x;
-		to_vec3.y = from_vec3.y * x;
-		to_vec3.z = from_vec3.z * x;
-	}
-	else if (c == '=')
-	{
-		to_vec3.x = x;
-		to_vec3.y = x;
-		to_vec3.z = x;
-	}
-	else if (c == '/')
-	{
-		to_vec3.x = from_vec3.x / x;
-		to_vec3.y = from_vec3.y / x;
-		to_vec3.z = from_vec3.z / x;
-	}
 	return (to_vec3);
 }
 
@@ -1059,32 +849,32 @@ double3	get_x_axe(double3 dir)
 {
 	double3 x_axe;
 
-	x_axe = normalize(ft_vec3vop_r((double3){0.0, 1.0, 0.0}, dir, 'c'));
+	x_axe = normalize(ft_vec((double3){0.0, 1.0, 0.0}, dir));
 	if (length(x_axe) == 0.0)
-		x_axe = normalize(ft_vec3vop_r((double3){1.0, 0.0, 0.0}, dir, 'c'));
+		x_axe = normalize(ft_vec((double3){1.0, 0.0, 0.0}, dir));
 	return (x_axe);
 }
 
 
-double3	get_local(t_cl_obj obj, double3 hit)
+double3	get_local(t_cl_obj *obj, double3 hit)
 {
 	double3 ret;
 	double3 x_axe;
 	double3 y_axe;
 
 
-	hit = obj.center - hit;
-	ret.y = dot(hit, obj.dir);
-	x_axe = get_x_axe(obj.dir);
-	hit = ft_vec3vop_r(hit, ft_vec3sop_r(obj.dir, ret.y, '*'), '-');
-	y_axe = ft_vec3vop_r(x_axe, obj.dir, 'c');
+	hit = obj->center - hit;
+	ret.y = dot(hit, obj->dir);
+	x_axe = get_x_axe(obj->dir);
+	hit = hit - obj->dir * ret.y;
+	y_axe = ft_vec(x_axe, obj->dir);
 	ret.x = dot(hit, x_axe);
 	ret.z = dot(hit, y_axe);
 
 	return ret;
 }
 
-t_rgb	get_rgb_from_texture_cylinder(double3 P, t_cl_obj obj, __global char* data[5])
+int3	get_rgb_from_texture_cylinder(double3 P, t_cl_obj *obj, __global char* data[5])
 {
 	double3	d;
 	float	u;
@@ -1092,93 +882,79 @@ t_rgb	get_rgb_from_texture_cylinder(double3 P, t_cl_obj obj, __global char* data
 	int		i;
 	int		j;
 
-	//d = P - obj.center;
 	d = get_local(obj, P);
-	//double3 crosss = (obj.dir.y < 0 ? cross((double3){0.0, 1.0, 0.0}, obj.dir) : -cross((double3){0.0, 1.0, 0.0}, obj.dir));
-
-	//d = rot_v(d, crosss, angle((double3){0.0, 100.0, 0.0}, obj.dir));
-	//d = get_default_cylinder_P(d, obj);
 	v = 0.5 + atan2(d.x, d.z) / M_PI * 0.5;
 	u = d.y / (2.0);
 	u = u - floor(u);
 
-	t_rgb ret;
+	int3 ret;
 
 	int tmp;
 
-	tmp = data[obj.tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3 + 2];
+	tmp = data[obj->tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3 + 2];
 
 	if (tmp < 0)
 		tmp += 255;
 	else if (tmp >= 255)
 		tmp -= 255;
 
-	ret.r = tmp;
+	ret.x = tmp;
 
-	tmp = data[obj.tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3 + 1];
-
-	if (tmp < 0)
-		tmp += 255;
-	else if (tmp >= 255)
-		tmp -= 255;
-
-	ret.g = tmp;
-
-	tmp = data[obj.tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3];
+	tmp = data[obj->tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3 + 1];
 
 	if (tmp < 0)
 		tmp += 255;
 	else if (tmp >= 255)
 		tmp -= 255;
-	ret.b = tmp;
 
-	/*if (obj->mat.texture.filtering)
-		return (bilinear_filtering(obj, img, u, v));
-	else
-	{
-		i = ft_clamp(u * obj->mat.texture.w, 0, obj->mat.texture.w - 1);
-		j = ft_clamp(v * obj->mat.texture.h, 0, obj->mat.texture.h - 1);
-		return (rgb_to_vec3(img[j][i]));
-	}*/
+	ret.y = tmp;
+
+	tmp = data[obj->tex][(int)(1024.0 * u) * 3 * 1024 + (int)(1024.0 * v) * 3];
+
+	if (tmp < 0)
+		tmp += 255;
+	else if (tmp >= 255)
+		tmp -= 255;
+	ret.z = tmp;
 	return (ret);
 }
 
 
 
 
-t_rgb get_rgb_from_texture(double3 P, t_cl_obj obj, __global char* data[5])
+int3 get_rgb_from_texture(double3 P, t_cl_obj *obj, __global char* data[5])
 {
-	if (obj.tex < 0 || obj.tex > 4)
-		return (obj.rgb);
-	if (obj.type == sphere)
+	if (obj->tex < 0 || obj->tex > 4)
+		return (obj->rgb);
+	if (obj->type == sphere)
 		return (get_rgb_from_texture_sphere(P, obj, data));
-	else if (obj.type == cylinder || obj.type == cone || obj.type == paraboloid)
+	else if (obj->type == cylinder || obj->type == cone)
 		return (get_rgb_from_texture_cylinder(P, obj, data));
 	
-	else if (obj.type == plane)
+	else if (obj->type == plane || obj->type == triangle)
 		return (get_rgb_from_texture_plane(P, obj, data));
-	return (obj.rgb);
+	return (obj->rgb);
 }
 
-inline void recalc_rgb(t_rgb *ret, t_rgb *colorr, double intensity, double spec_intensity, double coeff, double areflective)
+inline void recalc_rgb(int3 *ret, int3 *colorr, double intensity, double spec_intensity, double coeff, double areflective)
 {
-	if ((colorr->r *= intensity) >= 255.0)
-		colorr->r = 255.0;
-	if ((colorr->g *= intensity) >= 255.0)
-		colorr->g = 255.0;
-	if ((colorr->b *= intensity) >= 255.0)
-		colorr->b = 255.0;
+	if ((colorr->x *= intensity) >= 255.0)
+		colorr->x = 255.0;
+	if ((colorr->y *= intensity) >= 255.0)
+		colorr->y = 255.0;
+	if ((colorr->z *= intensity) >= 255.0)
+		colorr->z = 255.0;
 
-	if ((colorr->r += 255.0 * spec_intensity) >= 255.0)
-		colorr->r = 255.0;
-	if ((colorr->g += 255.0 * spec_intensity) >= 255.0)
-		colorr->g = 255.0;
-	if ((colorr->b += 255.0 * spec_intensity) >= 255.0)
-		colorr->b = 255.0;
+	if ((colorr->x += 255.0 * spec_intensity) >= 255.0)
+		colorr->x = 255.0;
+	if ((colorr->y += 255.0 * spec_intensity) >= 255.0)
+		colorr->y = 255.0;
+	if ((colorr->z += 255.0 * spec_intensity) >= 255.0)
+		colorr->z = 255.0;
 
-	ret->r += (colorr->r * coeff * areflective);
-	ret->g += (colorr->g * coeff * areflective);
-	ret->b += (colorr->b * coeff * areflective);
+	ret->x += (colorr->x * coeff * areflective);
+	ret->y += (colorr->y * coeff * areflective);
+	ret->z += (colorr->z * coeff * areflective);
 
 }
 
@@ -1198,9 +974,9 @@ int get_index_by_id(t_cl_scene *scene, int id)
 	return (-1);
 }
 
-int is_intersect_arrow(t_cl_scene *cl_scene, double3 start, double3 dir)
+int3 is_intersect_arrow(t_cl_scene *cl_scene, double3 start, double3 dir)
 {
-	double t = 9999999.0;
+	double t = UPPER_BOUND;
 	double tmp;
 	int		index;
 	int i = 0;
@@ -1214,54 +990,79 @@ int is_intersect_arrow(t_cl_scene *cl_scene, double3 start, double3 dir)
 		}
 		i++;
 	}
-	if (t == 9999999.0)
-		return (-1);
+	if (t == UPPER_BOUND)
+		return ((int3){-1, 0, 0});
 	else
-		return (rgb_to_color(cl_scene->arrows[index].rgb));
+		return (cl_scene->arrows[index].rgb);
 }
 
-double3 refracted_ray(double3 dir, double3 N)
+double3 refracted_ray(double3 dir, double3 N, char is_nutri, double coeff)
 {
-	double alpha;
-	double beta;
-	double3 Lp;
-	double3 Ln;
-	double3 Rn;
-	double3 R;
+	double3 ret = (double3){0.0, 0.0, 0.0};
+	double eta = 1.0f / coeff;
+	double cos_theta = -dot(N, dir);
+	if (is_nutri)
+	{
+		eta = 1.0f / eta;
+	}
+/*	if (cos_theta < 0)
+	{
+		cos_theta *= -1.0f;
+		N *= -1.0f;
+		eta = 1.0f / eta;
+	}*/
+	double k = 1.0f - eta * eta * (1.0 - cos_theta * cos_theta);
+	//if (k >= 0.0f) 
+		ret = normalize( eta * dir + (eta * cos_theta - sqrt(k)) * N);
+	return (ret); 
 
-	alpha = acos(dot(dir, N) / length(dir) * length(N));
-	beta = asin(sin(alpha) / 1.2);
-	Ln = N * dot(N, -dir);
-	Lp = -dir - Ln;
-	Rn = (tan(beta) / tan(alpha)) * -Lp;
-	R = -(Rn + Ln);
-	return R;
 }
 
 
-int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
+double3	rand_directed_vec(double3 dir, t_cl_scene *scene)
+{
+	double3 ranvect;
+
+	ranvect = (double3){r_rand(scene),
+		r_rand(scene),
+		r_rand(scene)};
+	ranvect = normalize(ranvect);
+	if (dot(dir, ranvect) < 0.0)
+		ranvect  *= -1;
+	return (ranvect);
+}
+
+
+int3 cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __global char* data[5])
 {
 	t_cl_obj closest_obj;
 	t_cl_obj *ptr;
 	double3 N;
+	double3 N_first;
+	double3 P_first;
+	double3 reflected;
+	t_cl_obj *ptr_first;
 	double closest_t;
 	double intensity;
+	double inten_first;
 	double spec_intensity;
 	double coeff = 1.0;
-	int subt_index;
-	t_rgb colorr;
-	t_rgb ret = (t_rgb){0, 0, 0};
+	char state;
+	char is_nutri;
+	int3 colorr;
+	int3 ret = (int3){0, 0, 0};
+
 	if (cl_scene->arrows_on)
 	{
-		int arr = is_intersect_arrow(cl_scene, start, dir);
-		if (arr != -1)
+		int3 arr = is_intersect_arrow(cl_scene, start, dir);
+		if (arr.x != -1)
 			return(arr);
 	}
 		while (depth >= 0)
 		{
 			ptr = 0;
-			closest_t = 99999.0;
-			spec_intensity = 0.0;
+			closest_t = UPPER_BOUND;
+			//spec_intensity = 0.0;
 			ptr = get_closest_object(&closest_t, start, dir, cl_scene);
 			if (ptr == 0)
 				break;//////////////////////отражается ничто
@@ -1271,45 +1072,141 @@ int cast_ray(t_cl_scene *cl_scene, double3 start, double3 dir, int depth, __glob
 
 			start = start + dir * closest_t;
 
-			///////////   <миша намашнял>
 
-			if (closest_obj.type == plane)
+			if (closest_obj.reflective == 0 && closest_obj.transparency == 0)
+				state = 0;
+			else if (closest_obj.reflective >= closest_obj.transparency)
+				state = 1;
+			else if (closest_obj.reflective < closest_obj.transparency)
+				state = 2;
+			is_nutri = 0;
+
+
+			colorr = get_rgb_from_texture(start, &closest_obj, data);
+			N = get_normal(start, &closest_obj);
+			///////////
+
+
+			if (cl_scene->advanced/* && ptr->amb*/)
 			{
-				dir = refracted_ray(dir, get_normal(start, closest_obj));
-				depth--;
-				continue;
+				double3 amb = (double3){0.0, 0.0, 0.0};
+				double3 tm;
+				double amb_intens;
+				//int cou = 100;
+				int3 tempo;
+				double3 amb_dir;
+				reflected = normalize(reflect_ray(-1.0 * dir, N));
+				for (int q = 0; q < 5; q++)
+				{
+					int l = 0;
+					amb_dir = normalize(rand_directed_vec(N, cl_scene));
+					while (dot(amb_dir, reflected) < closest_obj.smoothness)
+					{
+						amb_dir = normalize(amb_dir + reflected);
+						l++;
+						if (l == 100)
+							break;
+					}
+					/*if (dot(amb_dir, Dir_first) < ptr_first->smoothness)
+						continue;*/
+					ptr = 0;
+					closest_t = UPPER_BOUND;
+					spec_intensity = 0.0;
+					ptr = get_closest_object(&closest_t, start, amb_dir, cl_scene);
+					if (ptr == 0)
+					{
+						//cou--;
+						continue;//////////////////////отражается ничто
+					}
+					tempo = get_rgb_from_texture(start + amb_dir * closest_t, ptr, data);
+					amb_intens = compute_lighting(start + amb_dir * closest_t, get_normal(start + amb_dir * closest_t, ptr), -amb_dir, ptr, cl_scene, &spec_intensity, 0);
+					tm.x = (double)tempo.x * amb_intens / 5.0;
+					tm.y = (double)tempo.y * amb_intens/ 5.0;
+					tm.z = (double)tempo.z * amb_intens/ 5.0;
+
+					amb += tm;
+				}
+				//double coeffe = (double)cou / 100.0;
+				colorr.x *= 0.7 /* coeffe*/;
+				colorr.y *= 0.7 /* coeffe*/;
+				colorr.z *= 0.7 /* coeffe*/;
+
+
+				amb.x *= 0.3  /* * inten_first*/ /* (1.0 - coeffe)*/;
+				amb.y *= 0.3  /* inten_first *//* (1.0 - coeffe)*/;
+				amb.z *= 0.3  /* inten_first*/ /* (1.0 - coeffe)*/;
+			
+
+				tempo.x = (int)amb.x;
+				tempo.y = (int)amb.y;
+				tempo.z = (int)amb.z;
+
+
+				colorr += tempo;
+
+
 			}
 
+			/////////
 
-			///////////   </миша намашнял>
-
-			colorr = get_rgb_from_texture(start, closest_obj, data);
-			//return (rgb_to_color(colorr));
-			N = get_normal(start, closest_obj);
+			spec_intensity = 0.0;
+			
 			if (dot(N, dir)/length(N)/length(dir) > 0.0)
-				N *= -1;
-
-			intensity = compute_lighting(start, N, -dir, closest_obj, cl_scene, &spec_intensity);
-			recalc_rgb(&ret, &colorr, intensity, spec_intensity, coeff, 1.0 - (closest_obj.reflective)/* - closest_obj.transparency*/);
-			coeff *= closest_obj.reflective;
-		/*	if (closest_obj.transparency > 0.0)
 			{
-				t_rgb ref = refr1(ptr, cl_scene, start, dir, depth, data);
-				recalc_rgb(&ret, &ref, 1.0, 1.0, coeff, closest_obj.transparency);
+				N *= -1;
+				is_nutri = 1;
+			}
+			intensity = compute_lighting(start, N, -dir, &closest_obj, cl_scene, &spec_intensity, 1);
+			/*if (depth == DEPTH)
+			{
+				inten_first = intensity;
+				P_first = start;
+				Dir_first = normalize(dir);
+				N_first = N;
+				ptr_first = ptr;
 			}*/
+			recalc_rgb(&ret, &colorr, intensity, spec_intensity, coeff, 1.0 - (state == 1 ? closest_obj.reflective : closest_obj.transparency));
+			coeff *= (state == 1 ? closest_obj.reflective : closest_obj.transparency);
+
 			depth--;
-			if (closest_obj.reflective > 0.0)
+			//int count = 50;
+			
+			if (state == 0)
 				break;
-			dir = reflect_ray((-1.0) * dir, N);
+			else if (state == 1)
+				dir = reflect_ray((-1.0) * dir, N);
+			else if (state == 2)
+			{
+				dir = refracted_ray(dir, N, is_nutri, closest_obj.refractive);
+				if (dir.x == 0.0 && dir.y == 0.0 && dir.z == 0.0)
+					break;
+			}
+			
+			
 		}
-	return (rgb_to_color(ret));
+		
+			
+			
+	return (ret);
 }
 
+int3 rgb_to_int3(t_rgb rgb)
+{
+	int3 ret;
+
+	ret.x = rgb.r;
+	ret.y = rgb.g;
+	ret.z = rgb.b;
+
+	return (ret);
+}
 
 __kernel void mishania(__global char *image_data, __global t_scene *scene, __global char *data0, __global char *data1, __global char *data2, __global char *data3, __global char *data4)
 {
 	int x = get_global_id(0) / CH;
 	int y = get_global_id(0) % CH;
+
+	//printf("%d\n", get_global_id(1));
 	double alpha = scene->view_alpha;
 	double beta = scene->view_beta;
 	double3 pixel_pos_3d;
@@ -1318,7 +1215,7 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 	int i = 0;
 	int j = 0;
 	t_vector ptr;
-
+	t_rgb ptro;
 	ptr = scene->camera.center;
 	cl_scene.camera.center = vector_to_double3(ptr);
 	ptr = scene->camera.dir;
@@ -1328,7 +1225,9 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 	cl_scene.c_objs = scene->c_objs;
 
 	cl_scene.shadows_on = scene->shadows_on;
+	cl_scene.advanced = scene->advanced;
 	cl_scene.arrows_on = scene->arrows_on;
+	cl_scene.soft = scene->soft;
 	while (i < scene->c_objs)
 	{
 		ptr = scene->objs[i].center;
@@ -1344,8 +1243,8 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 		cl_scene.objs[i].p3 = vector_to_double3(ptr);
 
 
-
-		cl_scene.objs[i].rgb = scene->objs[i].rgb;
+		ptro = scene->objs[i].rgb;
+		cl_scene.objs[i].rgb = rgb_to_int3(ptro);
 		cl_scene.objs[i].radius = scene->objs[i].radius;
 		cl_scene.objs[i].type = scene->objs[i].type;
 		cl_scene.objs[i].reflective = scene->objs[i].reflective;
@@ -1353,7 +1252,10 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 		cl_scene.objs[i].angle = scene->objs[i].angle;
 		cl_scene.objs[i].tex = scene->objs[i].tex;
 		cl_scene.objs[i].transparency = scene->objs[i].transparency;
+		cl_scene.objs[i].refractive = scene->objs[i].refractive;
+		cl_scene.objs[i].smoothness = scene->objs[i].smoothness;
 		cl_scene.objs[i].id = scene->objs[i].id;
+		//cl_scene.objs[i].amb = scene->objs[i].amb;
 
 
 
@@ -1369,8 +1271,8 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 
 
 
-
-		cl_scene.arrows[i].rgb = scene->arrows[i].rgb;
+		ptro = scene->arrows[i].rgb;
+		cl_scene.arrows[i].rgb = rgb_to_int3(ptro);
 		cl_scene.arrows[i].type = scene->arrows[i].type;
 
 	//	cl_scene.arrows[i].id = scene->objs[i].id;
@@ -1395,6 +1297,12 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 		cl_scene.lights[j].intensity = scene->lights[j].intensity;
 		j++;
 	}
+	cl_scene.index = 0;
+	for (int h = 0; h < 500; h++)
+	{
+		cl_scene.rands[h] = scene->rands[h];
+		//printf("%f\n", ptro);
+	}
 
 	pixel_pos_3d = get_pixel_pisition(x - CW / 2, -y + CH / 2);
 	pixel_pos_3d = rotate_view(pixel_pos_3d, alpha, beta);
@@ -1407,7 +1315,9 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 	data[3] = data3;
 	data[4] = data4;
 
-
-	put_point_to_image(image_data, x, y, cast_ray(&cl_scene, cl_scene.camera.center, pixel_pos_3d, DEPTH, data));
+	if (!cl_scene.soft && !cl_scene.advanced)
+		put_point_to_image(image_data, x, y, cast_ray(&cl_scene, cl_scene.camera.center, pixel_pos_3d, DEPTH, data));
+else
+	plus_pixels(image_data, x, y, cast_ray(&cl_scene, cl_scene.camera.center, pixel_pos_3d, DEPTH, data));
 
 }

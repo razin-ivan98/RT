@@ -15,6 +15,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 0.0
 	color = 15209374
+	refractive = 1.0
 	specular = 0.0
 	reflective = 0.0
 	angle = 0.0
@@ -29,6 +30,7 @@ new object
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (0.0, 1.0, 0.0)
 	rotate = (0.0, 0.0, 0.0)
+	refractive = 1.0
 	radius = 0.0
 	color = 2535365
 	specular = 0.0
@@ -43,6 +45,7 @@ new object
 	position = (0.0, 0.0, 4.0)
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
+	refractive = 1.0
 	direction = (-0.422, 0.906, 0.0)
 	rotate = (0.0, 0.0, 0.0)
 	radius = 0.0
@@ -59,6 +62,7 @@ new object
 	position = (0.0, 1.0, 4.0)
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
+	refractive = 1.0
 	direction = (0.707, 0.707, 0.0)
 	rotate = (0.0, 0.0, 0.0)
 	radius = 0.400
@@ -79,6 +83,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
 	color = 7488700
+	refractive = 1.0
 	specular = 70.0
 	reflective = 0.0
 	angle = 0.0

@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:23:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/08 21:49:56 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/13 20:08:57 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,21 @@ t_vector dir, t_scene *scene)
 	return (closest_obj);
 }
 
-void			set_arrows_pos(t_rtv1 *rtv1)
+void			set_arrows_pos(t_rtv1 *rtv1, int mode)
 {
-	rtv1->scene.arrows[0].center = vector_sum(rtv1->selected->center, (t_vector){0.5, 0.0, 0.0});
-	rtv1->scene.arrows[1].center = vector_sum(rtv1->selected->center, (t_vector){0.0, 0.5, 0.0});
-	rtv1->scene.arrows[2].center = vector_sum(rtv1->selected->center, (t_vector){0.0, 0.0, 0.5});
+	if (!mode)
+	{
+		rtv1->scene.arrows[0].center = vector_sum(rtv1->selected->center, (t_vector){0.5, 0.0, 0.0});
+		rtv1->scene.arrows[1].center = vector_sum(rtv1->selected->center, (t_vector){0.0, 0.5, 0.0});
+		rtv1->scene.arrows[2].center = vector_sum(rtv1->selected->center, (t_vector){0.0, 0.0, 0.5});
+	}
+	else
+	{
+		rtv1->scene.arrows[0].center = vector_sum(rtv1->selected_light->center, (t_vector){0.5, 0.0, 0.0});
+		rtv1->scene.arrows[1].center = vector_sum(rtv1->selected_light->center, (t_vector){0.0, 0.5, 0.0});
+		rtv1->scene.arrows[2].center = vector_sum(rtv1->selected_light->center, (t_vector){0.0, 0.0, 0.5});
+	}
+	
 }
 
 int get_intersect_arrow(t_rtv1 *rtv1, t_vector start,  t_vector dir)
@@ -100,7 +110,7 @@ void			select_object(t_rtv1 *rtv1, int x, int y, t_obj **out)
 	pixel_pos_3d = get_pixel_pisition(x - CW / 2, -y + CH / 2);
 	pixel_pos_3d = rotate_view(pixel_pos_3d, rtv1->scene.view_alpha,
 			rtv1->scene.view_beta);
-
+		
 	if (rtv1->scene.arrows_on)
 	{
 		arrow = get_intersect_arrow(rtv1, rtv1->scene.camera.center, pixel_pos_3d);
@@ -110,6 +120,7 @@ void			select_object(t_rtv1 *rtv1, int x, int y, t_obj **out)
 			return;
 		}
 	}
+	rtv1->selected_light = NULL;
 	rtv1->selected_t = 9999999.9;
 	ptr = get_closest_object(&(rtv1->selected_t), rtv1->scene.camera.center,
 			pixel_pos_3d, &(rtv1->scene));
@@ -117,7 +128,7 @@ void			select_object(t_rtv1 *rtv1, int x, int y, t_obj **out)
 	{
 		*out = ptr;
 		rtv1->scene.arrows_on = 1;
-		set_arrows_pos(rtv1);
+		set_arrows_pos(rtv1, 0);
 	}
 	else
 		rtv1->left_mouse_pressed = 0;
@@ -168,4 +179,34 @@ void rot_polygonal(double x, double y, double z, t_rtv1 *rtv1)
 		}
 		i++;
 	}
+}
+
+int get_index_by_id(t_scene *scene, int id)
+{
+	int ret;
+	int i = 0;
+
+	while (i < scene->c_objs)
+	{
+		if (scene->objs[i].id == id)
+			return(i);
+		i++;
+	}
+
+	return (-1);
+}
+
+int get_light_index_by_id(t_scene *scene, int id)
+{
+	int ret;
+	int i = 0;
+
+	while (i < scene->c_lights)
+	{
+		if (scene->lights[i].id == id)
+			return(i);
+		i++;
+	}
+
+	return (-1);
 }

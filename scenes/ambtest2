@@ -1,0 +1,114 @@
+A0B4535477908DCDD788F8AF473F15F7
+camera_init
+{
+	position = (-18.529, 1.0, -64.680)
+	direction = (0.0, 0.0, 1.0)
+}
+
+new object
+{
+	type = sphere
+	position = (-18.849, -0.782, -72.185)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 16777215
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.700
+	transparency = 0.0
+	angle = 0.0
+	texture-id = -1
+}
+
+new object
+{
+	type = sphere
+	position = (0.0, 0.682, -67.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 9129932
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.700
+	transparency = 0.799
+	angle = 0.0
+	texture-id = -1
+}
+
+new object
+{
+	type = sphere
+	position = (10.0, 3.882, -20.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
+	rotate = (2.790, 4.301, 0.0)
+	radius = 6.698
+	color = 9129932
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.0
+	transparency = 0.0
+	angle = 0.0
+	texture-id = 4
+}
+
+new object
+{
+	type = plane
+	position = (-20.0, 0.0, 0.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (1.0, 0.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 6696806
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.0
+	transparency = 0.0
+	angle = 0.0
+	texture-id = -1
+}
+
+new object
+{
+	type = sphere
+	position = (0.0, 0.0, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 1575597
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.0
+	transparency = 0.0
+	angle = 0.0
+	texture-id = -1
+}
+
+new light
+{
+	type = point
+	intensity = 0.500
+	position = (2.0, 1.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
+}
+new light
+{
+	type = ambient
+	intensity = 0.500
+	position = (0.0, 0.0, 0.0)
+	direction = (-0.577, -0.577, -0.577)
+}
+
+
+end

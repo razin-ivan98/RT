@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:55:19 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/10 15:57:36 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/13 19:43:12 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ static void		new_light(t_scene *scene, t_light **light, int *j)
 {
 	*j = (*j) + 1;
 	*light = &(scene->lights[*j]);
+	(*light)->id = *j;
 }
 
 void			read_line_set_scene(char *line, t_scene *scene)

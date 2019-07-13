@@ -13,6 +13,7 @@ new object
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (0.0, 1.0, 0.0)
 	rotate = (0.0, 0.0, 0.0)
+	refractive = 1.0
 	radius = 0.0
 	color = 255
 	specular = 0.0
@@ -28,6 +29,7 @@ new object
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (0.0, 1.0, 0.0)
+	refractive = 1.0
 	rotate = (0.0, 0.0, 0.0)
 	radius = 0.0
 	color = 16776960

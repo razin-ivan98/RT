@@ -102,6 +102,12 @@ void save(t_rtv1 *rtv1, char *filename)
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].specular), fd);
         ft_putstr_fd("\n\treflective = ", fd);
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].reflective), fd);
+        ft_putstr_fd("\n\trefractive = ", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].refractive), fd);
+        ft_putstr_fd("\n\ttransparency = ", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].transparency), fd);
+        ft_putstr_fd("\n\tsmoothness = ", fd);
+        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].smoothness), fd);
         ft_putstr_fd("\n\tangle = ", fd);
         ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].angle), fd);
         ft_putstr_fd("\n\ttexture-id = ", fd);

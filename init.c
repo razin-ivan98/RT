@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/10 16:27:33 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/13 20:43:06 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void		scene_init(t_rtv1 *rtv1, char *name)
 		read_obj(rtv1, rtv1->scene_file_name);
 	else
 		read_scene(&(rtv1->scene), rtv1->scene_file_name);
+
 }
 
 static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
@@ -63,7 +64,7 @@ static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
 		(const char **)&source_str, (const size_t *)&source_size, &rtv1->ret);
 	rtv1->ret = clBuildProgram(rtv1->program, 1, &rtv1->device_id,
 		NULL, NULL, NULL);
-	//	printf("%d", rtv1->ret);
+		printf("%d", rtv1->ret);
 
 	size_t l_size;
 	char *logg = NULL;
@@ -89,10 +90,7 @@ static void	kernel_init(t_rtv1 *rtv1)
 	rtv1->kernel = clCreateKernel(rtv1->program, "mishania", &rtv1->ret);
 	rtv1->memobj = clCreateBuffer(rtv1->context, CL_MEM_READ_WRITE,
 		CW * CH * 4, NULL, &rtv1->ret);
-	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue, rtv1->memobj,
-		CL_TRUE, 0, CW * CH * 4, (char *)rtv1->surface->pixels, 0, NULL, NULL);////////////////////////
-	rtv1->ret = clSetKernelArg(rtv1->kernel, 0, sizeof(cl_mem),
-		(void *)&rtv1->memobj);
+	
 	rtv1->utils_memobj = clCreateBuffer(rtv1->context,
 		CL_MEM_READ_WRITE, sizeof(t_scene), NULL, &rtv1->ret);
 
@@ -164,10 +162,17 @@ static void	kernel_init(t_rtv1 *rtv1)
 
 void		graphics_init(t_rtv1 *rtv1)
 {
+	rtv1->selected_light = NULL;
 	rtv1->guide_on = 0;
 	rtv1->shift_pressed = 0;
 	rtv1->dropped_list = -1;
 	rtv1->active_edit = -1;
+	rtv1->edit_window_active = 0;
+	rtv1->selector_window_active = 0;
+	rtv1->next_win_ID = 2;
+	rtv1->scene.advanced = 0;
+	rtv1->scene.soft = 0;
+	//rtv1->arrow = -1;
 	SDL_Init(SDL_INIT_VIDEO);
     rtv1->surface = SDL_CreateRGBSurface(0, CW, CH, 32, 0, 0, 0, 0);
 	rtv1->ui = SDL_CreateRGBSurface(0, 400, CH, 32, 0, 0, 0, 0);
@@ -192,9 +197,9 @@ void		graphics_init(t_rtv1 *rtv1)
 	LIBUI_NewButton((t_but_constr){20, 60, "New Cylinder", "New Cylinder", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 	LIBUI_NewButton((t_but_constr){20, 100, "New Cone", "New Cone", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 	LIBUI_NewButton((t_but_constr){20, 140, "New Plane", "New Plane", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
-	LIBUI_NewButton((t_but_constr){20, 180, "New Triangle", "New Triangle", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
-	LIBUI_NewButton((t_but_constr){20, 220, "New Paraboloid", "New Paraboloid", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 
+	LIBUI_NewButton((t_but_constr){20, 500, "New PointL", "New PointL", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
+	//LIBUI_NewButton((t_but_constr){20, 550, "New PointD", "New PointD", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
 	
 
 	LIBUI_NewButton((t_but_constr){20, 280, "Delete Object", "Delete Object", 0x0000ff55}, rtv1->buttons, &(rtv1->c_buttons));
@@ -203,30 +208,16 @@ void		graphics_init(t_rtv1 *rtv1)
 
 
 
-	LIBUI_NewButton((t_but_constr){20, 400+20, "Radius+", "Radius+", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-    LIBUI_NewButton((t_but_constr){180, 400+20, "Radius-", "Radius-", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-
-    LIBUI_NewButton((t_but_constr){20, 400+70, "Angle+", "Angle+", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-    LIBUI_NewButton((t_but_constr){180, 400+70, "Angle-", "Angle-", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-
-
-    LIBUI_NewButton((t_but_constr){20, 400+120, "Specular+", "Specular+", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-    LIBUI_NewButton((t_but_constr){180, 400+120, "Specular-", "Specular-", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-
-    LIBUI_NewButton((t_but_constr){20, 400+170, "Reflective+", "Reflective+", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-    LIBUI_NewButton((t_but_constr){180, 400+170, "Reflective-", "Reflective-", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-
+	
+	LIBUI_NewButton((t_but_constr){20, 400+250, "Selector", "Selector", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 	LIBUI_NewButton((t_but_constr){20, 400+300, "Edit", "Edit", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+	LIBUI_NewButton((t_but_constr){20, 400+380, "Ambient", "Ambient", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+	LIBUI_NewButton((t_but_constr){20, 400+430, "Soft Shadows", "Soft Shadows", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
+	LIBUI_NewButton((t_but_constr){20, 400+480, "Export BMP", "Export BMP", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 
-	LIBUI_NewButton((t_but_constr){200, 400+300, "Texture1", "Texture1", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-	LIBUI_NewButton((t_but_constr){200, 400+350, "Texture2", "Texture2", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-	LIBUI_NewButton((t_but_constr){200, 400+400, "Texture3", "Texture3", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-	LIBUI_NewButton((t_but_constr){200, 400+450, "Texture4", "Texture4", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-	LIBUI_NewButton((t_but_constr){200, 400+500, "Texture5", "Texture5", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
-	LIBUI_NewButton((t_but_constr){200, 400+550, "Rand Color", "Rand Color", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);
 
 	//LIBUI_drop_list(rtv1, 200, 20);
-	t_list_constr tmp;
+/*	t_list_constr tmp;
 
 	tmp.x = 200;
 	tmp.y = 20;
@@ -246,7 +237,7 @@ void		graphics_init(t_rtv1 *rtv1)
 	ft_strcpy(tmp.items_function[3], "Texture4");
 	ft_strcpy(tmp.items_function[4], "Texture5");
 
-	LIBUI_NewList(tmp, rtv1->lists, &rtv1->c_lists);
+	LIBUI_NewList(tmp, rtv1->lists, &rtv1->c_lists);*/
 
 	LIBUI_NewEdit((t_edit_constr){200, 240, "Name", "Name", 0x00550000}, rtv1->edits, &rtv1->c_edits);
 	LIBUI_NewButton((t_but_constr){200, 300, "Save As", "Save As", 0x0000ff55}, rtv1->buttons, &rtv1->c_buttons);

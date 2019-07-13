@@ -15,6 +15,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 0.0
 	color = 65230
+	refractive = 1.0
 	specular = 0.0
 	reflective = 0.0
 	angle = 0.0
@@ -32,6 +33,7 @@ new object
 	radius = 0.0
 	color = 65230
 	specular = 0.0
+	refractive = 1.0
 	reflective = 0.0
 	angle = 0.0
 	texture-id = 1
@@ -47,6 +49,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 0.0
 	color = 65230
+	refractive = 1.0
 	specular = 0.0
 	reflective = 0.0
 	angle = 0.0
@@ -63,6 +66,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
 	color = 65280
+	refractive = 1.0
 	specular = 50.0
 	reflective = 0.0
 	angle = 0.0
@@ -80,6 +84,7 @@ new object
 	radius = 1.0
 	color = 65280
 	specular = 50.0
+	refractive = 1.0
 	reflective = 0.0
 	angle = 0.0
 	texture-id = 4
@@ -97,6 +102,7 @@ new object
 	color = 65280
 	specular = 50.0
 	reflective = 0.0
+	refractive = 1.0
 	angle = 0.0
 	texture-id = 4
 }
@@ -111,6 +117,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
 	color = 65280
+	refractive = 1.0
 	specular = 50.0
 	reflective = 0.0
 	angle = 0.0
@@ -127,6 +134,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 2.0
 	color = 6696806
+	refractive = 1.0
 	specular = 100.0
 	reflective = 0.0
 	angle = 0.0
@@ -145,6 +153,7 @@ new object
 	color = 9408079
 	specular = 100.0
 	reflective = 0.0
+	refractive = 1.0
 	angle = 0.0
 	texture-id = -1
 }
@@ -161,6 +170,7 @@ new object
 	color = 10499075
 	specular = 100.0
 	reflective = 0.0
+	refractive = 1.0
 	angle = 0.0
 	texture-id = -1
 }
@@ -176,6 +186,7 @@ new object
 	radius = 2.0
 	color = 8155680
 	specular = 100.0
+	refractive = 1.0
 	reflective = 0.0
 	angle = 0.0
 	texture-id = -1
@@ -192,6 +203,7 @@ new object
 	radius = 2.0
 	color = 15209374
 	specular = 100.0
+	refractive = 1.0
 	reflective = 0.0
 	angle = 0.0
 	texture-id = -1
@@ -208,6 +220,7 @@ new object
 	radius = 2.0
 	color = 2535365
 	specular = 100.0
+	refractive = 1.0
 	reflective = 0.0
 	angle = 0.0
 	texture-id = -1
@@ -227,6 +240,7 @@ new object
 	reflective = 0.0
 	angle = 0.0
 	texture-id = -1
+	refractive = 1.0
 }
 
 new object
@@ -239,6 +253,7 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 2.0
 	color = 7488700
+	refractive = 1.0
 	specular = 100.0
 	reflective = 0.0
 	angle = 0.0
@@ -256,6 +271,7 @@ new object
 	radius = 1.199
 	color = 255
 	specular = 5.0
+	refractive = 1.0
 	reflective = 0.0
 	angle = 0.0
 	texture-id = 0

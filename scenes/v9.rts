@@ -1,4 +1,4 @@
-E2A3AE4036932A8690F041A371BB50A8
+B0D75F40E7F2D5DAB7C085E492249890
 camera_init
 {
 	position = (0.0, 1.0, -79.0)
@@ -33,6 +33,24 @@ new object
 	rotate = (0.0, 0.0, 0.0)
 	radius = 0.0
 	color = 15209374
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.0
+	transparency = 0.0
+	angle = 0.0
+	texture-id = -1
+}
+
+new object
+{
+	type = plane
+	position = (0.0, 0.0, -30.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 0.0, 1.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 1495832
 	specular = 20.0
 	reflective = 0.0
 	refractive = 1.0
@@ -115,54 +133,18 @@ new object
 
 new object
 {
-	type = sphere
-	position = (-1.191, 0.682, -74.0)
+	type = cylinder
+	position = (14.127, 0.0, -26.169)
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
-	direction = (-0.577, -0.577, -0.577)
+	direction = (0.0, 0.408, 0.912)
 	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
-	color = 16777215
-	specular = 20.0
-	reflective = 0.0
-	refractive = 1.700
-	transparency = 0.0
-	angle = 0.0
-	texture-id = -1
-}
-
-new object
-{
-	type = sphere
-	position = (10.0, 3.882, -20.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (-0.577, -0.577, -0.577)
-	rotate = (2.790, 4.301, 0.0)
-	radius = 6.698
-	color = 9129932
+	radius = 6.0
+	color = 5897183
 	specular = 20.0
 	reflective = 0.0
 	refractive = 1.0
 	transparency = 0.0
-	angle = 0.0
-	texture-id = 4
-}
-
-new object
-{
-	type = sphere
-	position = (0.0, 0.682, -67.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (-0.577, -0.577, -0.577)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
-	color = 9129932
-	specular = 20.0
-	reflective = 0.0
-	refractive = 1.700
-	transparency = 0.799
 	angle = 0.0
 	texture-id = -1
 }
@@ -176,8 +158,15 @@ new light
 }
 new light
 {
+	type = point
+	intensity = 0.300
+	position = (2.0, 1.0, -78.0)
+	direction = (-0.577, -0.577, -0.577)
+}
+new light
+{
 	type = ambient
-	intensity = 0.500
+	intensity = 0.200
 	position = (0.0, 0.0, 0.0)
 	direction = (-0.577, -0.577, -0.577)
 }

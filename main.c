@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/07/10 16:00:59 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/13 20:17:50 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,51 @@ void	texture_load(void *mlx_ptr, char **data, char *file_name)
 void		provider(t_rtv1 *rtv1)
 {
 
+/*	int h = 0;
+	//srand(time(NULL));
+	while (h < 500)
+	{
+		rtv1->scene.rands[h] = (double)rand() / (double)rand();
+		//printf("%f\n", rtv1->scene.rands[h]);
+		h++;
+	}*/
+		int h = 0;
+	
+	//srand(time(NULL));
+	int fd;
 
+	fd = open("/dev/urandom", O_RDONLY);
+	char str[501];
+	int rand_suka;
+	read(fd, str, 501);
+	close (fd);
+	//double *ptr = (double *)(&str[0]);
+	while (h < 500)
+	{
+		rand_suka = rand()%2;
 
+		rtv1->scene.rands[h] = (double)str[h];
+		if (rtv1->scene.rands[h] < 0.0000001 || rtv1->scene.rands[h] > -0.0000001)
+			rtv1->scene.rands[h] = (double)rand()/12.58;
+		else
+			rtv1->scene.rands[h] += rtv1->scene.rands[h+1] / 59.36;
+		rtv1->scene.rands[h] *= rand_suka == 1 ? -1.0 : 1.0;
+		while (fabs(rtv1->scene.rands[h]) < 1000.0)
+		{
+			rtv1->scene.rands[h] *= 10.0;
+		}
+		while (fabs(rtv1->scene.rands[h]) > 10000.0)
+		{
+			rtv1->scene.rands[h] /= 10.0;
+		}
+		//printf("%f\n", rtv1->scene.rands[h]);
+		h++;
+		//sign *= -1.0; 
+	}
+	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue, rtv1->memobj,
+		CL_TRUE, 0, CW * CH * 4, (char *)rtv1->surface->pixels, 0, NULL, NULL);////////////////////////
+	rtv1->ret = clSetKernelArg(rtv1->kernel, 0, sizeof(cl_mem),
+		(void *)&rtv1->memobj);
 	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
 			rtv1->utils_memobj, CL_TRUE, 0,
 			sizeof(t_scene), &(rtv1->scene), 0, NULL, NULL);
@@ -80,6 +123,37 @@ void		provider(t_rtv1 *rtv1)
 		i++;
 	}
 
+	i = 0;
+	if (rtv1->edit_window_active)
+	{
+        while (i < rtv1->c_edit_buttons)
+        {
+            SDL_BlitSurface((rtv1->edit_buttons[i].is_pressed ? rtv1->edit_buttons[i].pressed : rtv1->edit_buttons[i].surface), &((SDL_Rect){-rtv1->edit_buttons[i].x, -rtv1->edit_buttons[i].y, rtv1->edit_buttons[i].x + 100, rtv1->edit_buttons[i].y + 30}), rtv1->edit_surface, NULL);
+            i++;
+        }
+        rtv1->edit_texture = SDL_CreateTextureFromSurface(rtv1->edit_renderer, rtv1->edit_surface);
+        SDL_RenderClear(rtv1->edit_renderer); //Очистка рендера
+        SDL_RenderCopy(rtv1->edit_renderer, rtv1->edit_texture, NULL, NULL); //Копируем в рендер фон
+        SDL_DestroyTexture(rtv1->edit_texture);
+        SDL_RenderPresent(rtv1->edit_renderer); //Погнали!!
+	}
+
+	i = 0;
+	if (rtv1->selector_window_active)
+	{
+        while (i < rtv1->c_selector_buttons)
+        {
+            SDL_BlitSurface((rtv1->selector_buttons[i].is_pressed ? rtv1->selector_buttons[i].pressed : rtv1->selector_buttons[i].surface), &((SDL_Rect){-rtv1->selector_buttons[i].x, -rtv1->selector_buttons[i].y, rtv1->selector_buttons[i].x + 100, rtv1->selector_buttons[i].y + 30}), rtv1->selector_surface, NULL);
+            i++;
+        }
+        rtv1->selector_texture = SDL_CreateTextureFromSurface(rtv1->selector_renderer, rtv1->selector_surface);
+        SDL_RenderClear(rtv1->selector_renderer); //Очистка рендера
+        SDL_RenderCopy(rtv1->selector_renderer, rtv1->selector_texture, NULL, NULL); //Копируем в рендер фон
+        SDL_DestroyTexture(rtv1->selector_texture);
+        SDL_RenderPresent(rtv1->selector_renderer); //Погнали!!
+	}
+
+
 	rtv1->ui_tex = SDL_CreateTextureFromSurface(rtv1->renderer, rtv1->ui);
 	//SDL_FreeSurface(rtv1->surface);
 	SDL_RenderClear(rtv1->renderer); //Очистка рендера
@@ -99,33 +173,92 @@ void		provider(t_rtv1 *rtv1)
 
 	SDL_Event ev;
     while(SDL_PollEvent(&ev))
+	{
+		//printf("\n%d", ev.window.windowID);
         switch(ev.type)
         {
-            case SDL_QUIT: 
-                SDL_DestroyWindow(rtv1->window);
-                SDL_Quit();
-                exit(1);
+			
+       /*     case SDL_QUIT:
+				
+				if (ev.window.windowID == 1)
+				{
+					//if (rtv1->edit_window_active)
+				//		SDL_DestroyWindow(rtv1->edit_window);
+					SDL_DestroyWindow(rtv1->window);
+					SDL_Quit();
+					exit(1);
+				}
+				else
+				{
+					//SDL_DestroyWindow(rtv1->edit_window);
+					SDL_DestroyWindow(rtv1->window);
+					SDL_Quit();
+					exit(1);
+				}
+				break;*/
+			case SDL_WINDOWEVENT:
+				if (ev.window.event == 14 && ev.window.windowID == 1)
+				{
+					if (rtv1->edit_window_active)
+						SDL_DestroyWindow(rtv1->edit_window);
+					if (rtv1->selector_window_active)
+						SDL_DestroyWindow(rtv1->edit_window);
+					SDL_DestroyWindow(rtv1->window);
+					SDL_Quit();
+					exit(1);
+				}
+				else if (ev.window.event == 14 && ev.window.windowID == rtv1->edit_window_active)
+				{
+					SDL_DestroyWindow(rtv1->edit_window);
+					rtv1->edit_window_active = 0;
+					//SDL_DestroyWindow(rtv1->window);
+					//SDL_Quit();
+					//exit(1);
+				}
+				else if (ev.window.event == 14 && ev.window.windowID == rtv1->selector_window_active)
+				{
+					SDL_DestroyWindow(rtv1->selector_window);
+					rtv1->selector_window_active = 0;
+					//SDL_DestroyWindow(rtv1->window);
+					//SDL_Quit();
+					//exit(1);
+				}
+				//printf("\t%d", ev.window.event);
+				break;
 			case SDL_KEYDOWN:
+				//printf("%d\n", ev.window.windowID);
 				key_pressed(ev.key.keysym.sym, rtv1);
 				break;
 			case SDL_KEYUP:
 				key_release(ev.key.keysym.sym, rtv1);
 				break;
 			case SDL_MOUSEBUTTONDOWN:
-				mouse_pressed(ev.button.button, ev.button.x, ev.button.y, rtv1);
+				if (ev.window.windowID == 1)
+					mouse_pressed(ev.button.button, ev.button.x, ev.button.y, rtv1);
+				else if (ev.window.windowID == rtv1->edit_window_active)
+					edit_mouse_pressed(ev.button.button, ev.button.x, ev.button.y, rtv1);
+				else if (ev.window.windowID == rtv1->selector_window_active)
+					selector_mouse_pressed(ev.button.button, ev.button.x, ev.button.y, rtv1);
 				break;
 			case SDL_MOUSEBUTTONUP:
-				mouse_release(ev.button.button, ev.button.x, ev.button.y, rtv1);
+				if (ev.window.windowID == 1)
+					mouse_release(ev.button.button, ev.button.x, ev.button.y, rtv1);
+				else if (ev.window.windowID == rtv1->edit_window_active)
+					edit_mouse_release(ev.button.button, ev.button.x, ev.button.y, rtv1);
+				else if (ev.window.windowID == rtv1->selector_window_active)
+					selector_mouse_release(ev.button.button, ev.button.x, ev.button.y, rtv1);
 				break;
 			case SDL_MOUSEMOTION:
-				mouse_move(ev.motion.x, ev.motion.y, rtv1);
+				if (ev.window.windowID == 1)
+					mouse_move(ev.motion.x, ev.motion.y, rtv1);
 				break;
 			case SDL_MOUSEWHEEL:
-				mouse_wheel(ev.wheel.y, rtv1);
+				if (ev.window.windowID == 1)
+					mouse_wheel(ev.wheel.y, rtv1);
 				break;
 			default: break;
         }
-	
+	}
 
     SDL_Delay(10);
 }
@@ -139,7 +272,7 @@ int			main(int ac, char **av)
 		ft_putendl("Argument is not valid.");
 		err_exit();
 	}
-	if ((ac > 2 && (ft_strcmp(av[2], "obj") && ft_strcmp(av[3], "obj")) && (ft_strcmp(av[2], "admin") && ft_strcmp(av[3], "admin"))) || ac == 2)
+	if ((ac > 2 && (ft_strcmp(av[2], "obj")) && (ft_strcmp(av[2], "admin"))) || ac == 2)
 	{
 		if (check_crypto_key(av[1]))
 		{
@@ -148,12 +281,12 @@ int			main(int ac, char **av)
 		}
 	}
 	rtv1.from_obj = 0;
-	if (ac > 2 && (!ft_strcmp(av[2], "obj") || !ft_strcmp(av[3], "obj")))
+	if (ac > 2 && (!ft_strcmp(av[2], "obj") || !ft_strcmp(av[2], "obj")))
 	{
 		rtv1.from_obj = 1;
 	}
 	scene_init(&rtv1, av[1]);
-	printf("\n%d\n", rtv1.scene.c_lights);
+	//printf("\n%d\n", rtv1.scene.c_lights);
 	graphics_init(&rtv1);
 	set_start_angles(&(rtv1.scene));
 	while(1)

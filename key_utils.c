@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/08 21:45:14 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/13 20:42:03 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,39 +73,59 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 			if (!ft_strcmp(func, "New Sphere"))
 			{
 				new_sphere(rtv1);
+				refresh_selector_buttons(rtv1);
 			}
 			else if (!ft_strcmp(func, "New Cylinder"))
 			{
 				new_cylinder(rtv1);
+				refresh_selector_buttons(rtv1);
 			}
 			else if (!ft_strcmp(func, "New Cone"))
 			{
 				new_cone(rtv1);
+				refresh_selector_buttons(rtv1);
 			}
 			else if (!ft_strcmp(func, "New Plane"))
 			{
 				new_plane(rtv1);
+				refresh_selector_buttons(rtv1);
 			}
-			else if (!ft_strcmp(func, "New Triangle"))
+			else if (!ft_strcmp(func, "New PointL"))
 			{
-				new_triangle(rtv1);
+				new_point(rtv1);
+				refresh_selector_buttons(rtv1);
 			}
-			else if (!ft_strcmp(func, "New Paraboloid"))
+			else if (!ft_strcmp(func, "New PointD"))
 			{
-				new_paraboloid(rtv1);
+				new_directional(rtv1);
+				refresh_selector_buttons(rtv1);
 			}
+
 			
 			else if (!ft_strcmp(func, "Delete Object"))
-			{	
+			{
+				int selected_id;
+				if (rtv1->selected_light && rtv1->scene.c_lights)
+				{
+					selected_id = get_light_index_by_id(&rtv1->scene, rtv1->selected_light->id);
+					rtv1->scene.lights[selected_id] = rtv1->scene.lights[rtv1->scene.c_lights - 1];
+					rtv1->scene.c_lights--;
+					rtv1->scene.arrows_on = 0;
+					refresh_selector_buttons(rtv1);
+					return(0);
+				}
+
+
 				if (!rtv1->scene.c_objs)
 					return (0);
-				int selected_id;
+				
 
 				selected_id = (rtv1->selected - &rtv1->scene.objs[0])/*sizeof(t_obj)*/;
 
 				rtv1->scene.objs[selected_id] = rtv1->scene.objs[rtv1->scene.c_objs - 1];
 				rtv1->scene.c_objs--;
 				rtv1->scene.arrows_on = 0;
+				refresh_selector_buttons(rtv1);
 				/*if (!rtv1->scene.c_objs)
 					rtv1->selected = NULL;
 				else
@@ -117,85 +137,41 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 				save(rtv1, rtv1->scene_file_name);
 			}
 
-			else if (!ft_strcmp(func, "Radius+"))
-			{	
-				rtv1->selected->radius += 0.1;
-			}
-			else if (!ft_strcmp(func, "Radius-") && rtv1->selected->radius > 0.1)
-			{	
-				rtv1->selected->radius -= 0.1;
-			}
 
-			else if (!ft_strcmp(func, "Angle+"))
-			{	
-				rtv1->selected->angle += 0.1;
-			}
-			else if (!ft_strcmp(func, "Angle-"))
-			{	
-				rtv1->selected->angle -= 0.1;
-			}
 
-			else if (!ft_strcmp(func, "Specular+"))
-			{	
-				rtv1->selected->specular += 20.0;
-			}
-			else if (!ft_strcmp(func, "Specular-") && rtv1->selected->specular > 0.0)
-			{	
-				rtv1->selected->specular -= 20.0;
-			}
-
-			else if (!ft_strcmp(func, "Reflective+") && rtv1->selected->reflective < 1.0)
-			{	
-				rtv1->selected->reflective += 0.1;
-				if (rtv1->selected->reflective > 1.0)
-					rtv1->selected->reflective = 1.0;
-			}
-			else if (!ft_strcmp(func, "Reflective-"))
-			{	
-				rtv1->selected->reflective -= 0.1;
-				if (rtv1->selected->reflective < 0.0)
-					rtv1->selected->reflective = 0.0;
-			}
-			else if (!ft_strcmp(func, "Texture1"))
-			{	
-				rtv1->selected->tex = 0;
-			}
-			else if (!ft_strcmp(func, "Texture2"))
-			{	
-				rtv1->selected->tex = 1;
-			}
-			else if (!ft_strcmp(func, "Texture3"))
-			{	
-				rtv1->selected->tex = 2;
-			}
-			else if (!ft_strcmp(func, "Texture4"))
-			{	
-				rtv1->selected->tex = 3;
-			}
-			else if (!ft_strcmp(func, "Texture5"))
-			{	
-				rtv1->selected->tex = 4;
-			}
-			else if (!ft_strcmp(func, "Rand Color"))
-			{	
-				rtv1->selected->tex = -1;
-				rtv1->selected->rgb = (t_rgb){rand()%255, rand()%255, rand()%255};
-			}
 			else if (!ft_strcmp(func, "Save As"))
 			{
 				save_as(rtv1);
 			}
+			else if (!ft_strcmp(func, "Ambient"))
+			{
+				rtv1->scene.advanced = (rtv1->scene.advanced ? 0 : 1);
+			}
+			else if (!ft_strcmp(func, "Soft Shadows"))
+			{
+				rtv1->scene.soft = (rtv1->scene.soft ? 0 : 1);
+			}
+			else if (!ft_strcmp(func, "Export BMP"))
+			{
+				IMG_SavePNG(rtv1->surface, "screens/1.png");
+			}
+
 
 		/*	else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Expand"))
 			{
 				rtv1->list->expand = rtv1->list->expand ? 0 : 1;
 				rtv1->list->ft_redraw(rtv1);
 			}*/
-		/*	else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Edit"))
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Edit"))
 			{	
-				pthread_t thread;
-				pthread_create(&thread, NULL, edit, rtv1);
-			}*/
+				if (rtv1->edit_window_active == 0)
+					edit(rtv1);
+			}
+			else if (!ft_strcmp(rtv1->buttons[pressed_button].function, "Selector"))
+			{	
+				if (rtv1->selector_window_active == 0)
+					scene_selector(rtv1);
+			}
 			else if (!ft_strcmp(func, "lol"))
 			{
 				if (rtv1->lists[0].is_dropped == 1)
@@ -231,7 +207,7 @@ int	mouse_release(int button, int x, int y, t_rtv1 *rtv1)
 	rtv1->right_mouse_pressed = 0;
 	rtv1->mid_mouse_pressed = 0;
 	rtv1->arrow = -1;
-	if (x > 1000)
+	//if (x > 1000)
 	{
 		int i = 0;
 		while (i < rtv1->c_buttons)
@@ -304,7 +280,7 @@ int	mouse_move(int x, int y, t_rtv1 *rtv1)
 		dy = y - rtv1->prev_y;
 		//if (!(rtv1->selected))
 		//rtv1->selected = &(rtv1->scene.objs[0]);
-		if (rtv1->selected && rtv1->arrow != -1)
+		if (rtv1->selected && rtv1->arrow != -1 && !rtv1->selected_light)
 		{
 			if (rtv1->arrow == 0)
 			{
@@ -330,8 +306,28 @@ int	mouse_move(int x, int y, t_rtv1 *rtv1)
 					rtv1->selected->center.z += 0.001 * dx * rtv1->selected_t * (sin(rtv1->scene.view_beta) > 0 ? 1 : -1);
 				//rtv1->selected->center.y -= 0.001 * dy * rtv1->selected_t;
 			}
+			set_arrows_pos(rtv1, 0);
 		}
-		set_arrows_pos(rtv1);
+		else if (rtv1->selected_light && rtv1->arrow != -1)
+		{
+			rtv1->selected_t = vector_length(vector_subt(rtv1->scene.camera.center, rtv1->selected_light->center));
+			//printf("%d\n", rtv1->arrow);
+			if (rtv1->arrow == 0)
+			{
+				rtv1->selected_light->center.x += 0.001 * dx * rtv1->selected_t * (cos(rtv1->scene.view_beta) > 0 ? 1 : -1);
+				
+			}
+			else if (rtv1->arrow == 1)
+			{
+				rtv1->selected_light->center.y -= 0.001 * dy * rtv1->selected_t;
+			}
+			else if (rtv1->arrow == 2)
+			{
+				rtv1->selected_light->center.z += 0.001 * dx * rtv1->selected_t * (sin(rtv1->scene.view_beta) > 0 ? 1 : -1);
+			}
+			set_arrows_pos(rtv1, 1);
+		}
+		
 	}
 	else if (rtv1->mid_mouse_pressed)
 	{
