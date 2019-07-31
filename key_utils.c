@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 12:11:52 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/16 20:50:15 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/31 13:06:56 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	mouse_pressed(int button, int x, int y, t_rtv1 *rtv1)
 					ft_strcpy(func, rtv1->lists[ret.list].items[ret.item].function);
 					///puts(func);
 				}
-				rtv1->lists[ret.list].items[ret.item].is_pressed = 1;
+				//rtv1->lists[ret.list].items[ret.item].is_pressed = 1;
 			}
 			else
 			{

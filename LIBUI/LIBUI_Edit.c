@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 11:16:04 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/29 14:03:04 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/31 14:41:28 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ t_LIBUI_Edit LIBUI_CreateEdit(t_edit_constr input)
     SDL_Surface *text;
     TTF_Font *font = TTF_OpenFont("lato/Lato-Bold.ttf", 12);
     text = TTF_RenderText_Blended(font, input.text, (SDL_Color){0, 0, 0, 0});
+    TTF_CloseFont(font);
     TTF_Quit();
 
     edit.with_text = SDL_CreateRGBSurface(0, 100, 30, 32,0,0,0,0);
@@ -43,6 +44,7 @@ t_LIBUI_Edit LIBUI_CreateEdit(t_edit_constr input)
     SDL_BlitSurface(text, &((SDL_Rect){ -8 , -8 ,100, 30 }), edit.with_text, NULL);
     SDL_BlitSurface(text, &((SDL_Rect){ -8 , -8 ,100, 30 }), edit.with_text_active, NULL);
 
+    SDL_FreeSurface(text);
     return(edit);
 }
 
@@ -74,7 +76,11 @@ void LIBUI_EditRefresh(t_LIBUI_Edit *edits, int number)
     SDL_Surface *text;
     TTF_Font *font = TTF_OpenFont("lato/Lato-Bold.ttf", 12);
     text = TTF_RenderText_Blended(font, edits[number].text, (SDL_Color){0, 0, 0, 0});
+    TTF_CloseFont(font);
     TTF_Quit();
+
+    SDL_FreeSurface(edits[number].with_text);
+    SDL_FreeSurface(edits[number].with_text_active);
 
     edits[number].with_text = SDL_CreateRGBSurface(0, 100, 30, 32,0,0,0,0);
     edits[number].with_text_active = SDL_CreateRGBSurface(0, 100, 30, 32,0,0,0,0);
@@ -83,4 +89,5 @@ void LIBUI_EditRefresh(t_LIBUI_Edit *edits, int number)
 
     SDL_BlitSurface(text, &((SDL_Rect){ -8 , -8 ,100, 30 }), edits[number].with_text, NULL);
     SDL_BlitSurface(text, &((SDL_Rect){ -8 , -8 ,100, 30 }), edits[number].with_text_active, NULL);
+    SDL_FreeSurface(text);
 }

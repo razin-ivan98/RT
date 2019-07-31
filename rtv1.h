@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 10:45:16 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/13 20:39:01 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/31 14:20:27 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,8 @@ typedef struct	s_rtv1
 	SDL_Window			*edit_window;
 	SDL_Renderer		*edit_renderer;
 	SDL_Texture			*edit_texture;
+
+	SDL_Surface *textures[5];
 
 	t_LIBUI_Button		edit_buttons[30];
 	int					c_edit_buttons;
@@ -305,8 +307,10 @@ int				check_crypto_key(char *file_name);
 
 
 void edit (t_rtv1 *rtv1);
+void destroy_edit(t_rtv1 *rtv1);
 void scene_selector(t_rtv1 *rtv1);
 void refresh_selector_buttons(t_rtv1 *rtv1);
+void destroy_scene_selector(t_rtv1 *rtv1);
 t_vector rot(t_vector P, t_vector angles);
 
 

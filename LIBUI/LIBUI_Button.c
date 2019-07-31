@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 10:46:33 by chorange          #+#    #+#             */
-/*   Updated: 2019/06/29 11:54:58 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/31 14:03:16 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,14 @@ t_LIBUI_Button LIBUI_CreateButton(t_but_constr input)
     SDL_Surface *text;
     TTF_Font *font = TTF_OpenFont("lato/Lato-Bold.ttf", 14);
     text = TTF_RenderText_Blended(font, input.text, (SDL_Color){0, 0, 0, 0});
+    TTF_CloseFont(font);
     TTF_Quit();
 
     SDL_BlitSurface(text, &((SDL_Rect){ -8 , -8 ,100, 30 }), button.surface, NULL);
     SDL_BlitSurface(text, &((SDL_Rect){ -8 , -8 ,100, 30 }), button.pressed, NULL);
 
-
+    SDL_FreeSurface(text);
+    
 
     return (button);
 }

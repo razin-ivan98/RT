@@ -1,27 +1,8 @@
-9226B65311BC20E122AC92559D886AE2
+A348F6B01733BDF2B9445BD7C42F2438
 camera_init
 {
 	position = (0.0, 1.500, -3.0)
 	direction = (0.0, 0.0, 1.0)
-}
-
-new object
-{
-	type = plane
-	position = (0.0, 0.0, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.0, 1.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
-	color = 15552346
-	specular = 20.0
-	reflective = 0.0
-	refractive = 1.0
-	transparency = 0.0
-	smoothness = 0.0
-	angle = 0.0
-	texture-id = -1
 }
 
 new object
@@ -33,45 +14,7 @@ new object
 	direction = (0.0, 1.0, 0.0)
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
-	color = 6595682
-	specular = 20.0
-	reflective = 0.0
-	refractive = 1.0
-	transparency = 0.0
-	smoothness = 0.0
-	angle = 0.200
-	texture-id = -1
-}
-
-new object
-{
-	type = cylinder
-	position = (0.0, 0.0, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.0, 1.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
-	color = 5278287
-	specular = 20.0
-	reflective = 0.0
-	refractive = 1.0
-	transparency = 0.0
-	smoothness = 0.0
-	angle = 0.200
-	texture-id = -1
-}
-
-new object
-{
-	type = sphere
-	position = (0.0, 0.0, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.0, 1.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
-	color = 8069401
+	color = 8758121
 	specular = 20.0
 	reflective = 0.0
 	refractive = 1.0

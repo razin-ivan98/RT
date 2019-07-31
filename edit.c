@@ -86,3 +86,21 @@ void edit (t_rtv1 *rtv1)
    // {
     
 }
+
+void destroy_edit(t_rtv1 *rtv1)
+{
+	int i;
+
+	i = 0;
+	while (i < rtv1->c_edit_buttons)
+	{
+		SDL_FreeSurface(rtv1->edit_buttons[i].pressed);
+		SDL_FreeSurface(rtv1->edit_buttons[i].surface);
+		i++;
+	}
+	rtv1->c_edit_buttons = 0;
+	SDL_FreeSurface(rtv1->edit_surface);
+	SDL_DestroyWindow(rtv1->edit_window);
+	rtv1->edit_window_active = 0;
+	
+}

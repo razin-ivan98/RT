@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/24 19:15:37 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/31 13:49:46 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,12 @@ static void	kernel_init(t_rtv1 *rtv1)
 
 	rtv1->global_work_size = CW * CH;
 
-	SDL_Surface *textures[5];
-	textures[0] = SDL_LoadBMP("tex1.bmp");
-	textures[1] = SDL_LoadBMP("tex2.bmp");
-	textures[2] = SDL_LoadBMP("tex3.bmp");
-	textures[3] = SDL_LoadBMP("tex4.bmp");
-	textures[4] = SDL_LoadBMP("tex5.bmp");
+	//SDL_Surface *textures[5];
+	rtv1->textures[0] = SDL_LoadBMP("tex1.bmp");
+	rtv1->textures[1] = SDL_LoadBMP("tex2.bmp");
+	rtv1->textures[2] = SDL_LoadBMP("tex3.bmp");
+	rtv1->textures[3] = SDL_LoadBMP("tex4.bmp");
+	rtv1->textures[4] = SDL_LoadBMP("tex5.bmp");
 
 	char *texes;
 	//texes = (char *)malloc(1024 * 1024 * 3 * 5 + 1);
@@ -124,7 +124,7 @@ static void	kernel_init(t_rtv1 *rtv1)
 		1024 * 1024 * 3, NULL, &rtv1->ret);
 	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
 			rtv1->tex, CL_TRUE, 0,
-			1024 * 1024 * 3, (unsigned char *)textures[0]->pixels, 0, NULL, NULL);
+			1024 * 1024 * 3, (unsigned char *)rtv1->textures[0]->pixels, 0, NULL, NULL);
 	rtv1->ret = clSetKernelArg(rtv1->kernel, 2,
 			sizeof(cl_mem), (void *)&rtv1->tex);
 
@@ -132,7 +132,7 @@ static void	kernel_init(t_rtv1 *rtv1)
 		1024 * 1024 * 3, NULL, &rtv1->ret);
 	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
 			rtv1->tex, CL_TRUE, 0,
-			1024 * 1024 * 3, (unsigned char *)textures[1]->pixels, 0, NULL, NULL);
+			1024 * 1024 * 3, (unsigned char *)rtv1->textures[1]->pixels, 0, NULL, NULL);
 	rtv1->ret = clSetKernelArg(rtv1->kernel, 3,
 			sizeof(cl_mem), (void *)&rtv1->tex);
 
@@ -140,7 +140,7 @@ static void	kernel_init(t_rtv1 *rtv1)
 		1024 * 1024 * 3, NULL, &rtv1->ret);
 	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
 			rtv1->tex, CL_TRUE, 0,
-			1024 * 1024 * 3, (unsigned char *)textures[2]->pixels, 0, NULL, NULL);
+			1024 * 1024 * 3, (unsigned char *)rtv1->textures[2]->pixels, 0, NULL, NULL);
 	rtv1->ret = clSetKernelArg(rtv1->kernel, 4,
 			sizeof(cl_mem), (void *)&rtv1->tex);
 
@@ -148,7 +148,7 @@ static void	kernel_init(t_rtv1 *rtv1)
 		1024 * 1024 * 3, NULL, &rtv1->ret);
 	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
 			rtv1->tex, CL_TRUE, 0,
-			1024 * 1024 * 3, (unsigned char *)textures[3]->pixels, 0, NULL, NULL);
+			1024 * 1024 * 3, (unsigned char *)rtv1->textures[3]->pixels, 0, NULL, NULL);
 	rtv1->ret = clSetKernelArg(rtv1->kernel, 5,
 			sizeof(cl_mem), (void *)&rtv1->tex);
 
@@ -156,7 +156,7 @@ static void	kernel_init(t_rtv1 *rtv1)
 		1024 * 1024 * 3, NULL, &rtv1->ret);
 	rtv1->ret = clEnqueueWriteBuffer(rtv1->command_queue,
 			rtv1->tex, CL_TRUE, 0,
-			1024 * 1024 * 3, (unsigned char *)textures[4]->pixels, 0, NULL, NULL);
+			1024 * 1024 * 3, (unsigned char *)rtv1->textures[4]->pixels, 0, NULL, NULL);
 	rtv1->ret = clSetKernelArg(rtv1->kernel, 6,
 			sizeof(cl_mem), (void *)&rtv1->tex);
 }
@@ -181,7 +181,7 @@ void		graphics_init(t_rtv1 *rtv1)
 
 	SDL_FillRect(rtv1->tmp, &((SDL_Rect){0, 0, 400, CH}), 0x00FFFF00);
 
-    rtv1->window = SDL_CreateWindow("Game", 400, 200, CW + 400, CH, SDL_WINDOW_SHOWN);
+    rtv1->window = SDL_CreateWindow("RT", 400, 200, CW + 400, CH, SDL_WINDOW_SHOWN);
 	//SDL_Window *window = SDL_CreateWindow("Game", 400, 200, CW + 400, CH, SDL_WINDOW_SHOWN);
 	
     rtv1->renderer = SDL_CreateRenderer(rtv1->window, -1, SDL_RENDERER_ACCELERATED);

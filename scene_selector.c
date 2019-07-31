@@ -1,15 +1,30 @@
 #include "rtv1.h"
 
+void destroy_buttons(t_rtv1 *rtv1)
+{
+    int i;
+
+    i = 0;
+    while (i < rtv1->c_selector_buttons)
+    {
+        SDL_FreeSurface(rtv1->selector_buttons[i].pressed);
+        SDL_FreeSurface(rtv1->selector_buttons[i].surface);
+        i++;
+    }
+    rtv1->c_selector_buttons = 0;
+}
+
 void refresh_selector_buttons(t_rtv1 *rtv1)
 {
     int i;
     char str[64];
     char *tmp;
 
-    rtv1->c_selector_buttons = 0;
+    
 
     i = 0;
     SDL_FillRect(rtv1->selector_surface, &((SDL_Rect){0, 0, 300, 1000}), 0x00FFFF00);
+    destroy_buttons(rtv1);
     while (i < rtv1->scene.c_objs)
     {
         int id = 9999;
@@ -67,4 +82,11 @@ void scene_selector(t_rtv1 *rtv1)
     
 
     refresh_selector_buttons(rtv1);
+}
+
+void destroy_scene_selector(t_rtv1 *rtv1)
+{
+    SDL_DestroyWindow(rtv1->selector_window);
+	rtv1->selector_window_active = 0;
+    SDL_FreeSurface(rtv1->selector_surface);
 }

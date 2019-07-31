@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 19:25:19 by cocummin          #+#    #+#             */
-/*   Updated: 2019/07/13 20:17:50 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/31 14:18:22 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,16 +209,14 @@ void		provider(t_rtv1 *rtv1)
 				}
 				else if (ev.window.event == 14 && ev.window.windowID == rtv1->edit_window_active)
 				{
-					SDL_DestroyWindow(rtv1->edit_window);
-					rtv1->edit_window_active = 0;
+					destroy_edit(rtv1);
 					//SDL_DestroyWindow(rtv1->window);
 					//SDL_Quit();
 					//exit(1);
 				}
 				else if (ev.window.event == 14 && ev.window.windowID == rtv1->selector_window_active)
 				{
-					SDL_DestroyWindow(rtv1->selector_window);
-					rtv1->selector_window_active = 0;
+					destroy_scene_selector(rtv1);
 					//SDL_DestroyWindow(rtv1->window);
 					//SDL_Quit();
 					//exit(1);

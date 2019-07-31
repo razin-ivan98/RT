@@ -1,58 +1,20 @@
-9226B65311BC20E122AC92559D886AE2
+5841B92A60C77215F0A01212476F508D
 camera_init
 {
-	position = (0.0, 1.500, -3.0)
+	position = (3.807, 1.0, -2.150)
 	direction = (0.0, 0.0, 1.0)
 }
 
 new object
 {
-	type = plane
-	position = (0.0, 0.0, 7.0)
+	type = sphere
+	position = (0.0, 1.967, 7.0)
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (0.0, 1.0, 0.0)
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
-	color = 15552346
-	specular = 20.0
-	reflective = 0.0
-	refractive = 1.0
-	transparency = 0.0
-	smoothness = 0.0
-	angle = 0.0
-	texture-id = -1
-}
-
-new object
-{
-	type = cone
-	position = (0.0, 0.0, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.0, 1.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
-	color = 6595682
-	specular = 20.0
-	reflective = 0.0
-	refractive = 1.0
-	transparency = 0.0
-	smoothness = 0.0
-	angle = 0.200
-	texture-id = -1
-}
-
-new object
-{
-	type = cylinder
-	position = (0.0, 0.0, 7.0)
-	pos2 = (0.0, 0.0, 0.0)
-	pos3 = (0.0, 0.0, 0.0)
-	direction = (0.0, 1.0, 0.0)
-	rotate = (0.0, 0.0, 0.0)
-	radius = 1.0
-	color = 5278287
+	color = 6996282
 	specular = 20.0
 	reflective = 0.0
 	refractive = 1.0
@@ -65,13 +27,51 @@ new object
 new object
 {
 	type = sphere
-	position = (0.0, 0.0, 7.0)
+	position = (2.777, 0.0, 7.0)
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (0.0, 1.0, 0.0)
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
-	color = 8069401
+	color = 7039362
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.0
+	transparency = 0.0
+	smoothness = 0.0
+	angle = 0.200
+	texture-id = -1
+}
+
+new object
+{
+	type = sphere
+	position = (0.0, -2.87, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.300
+	color = 10023837
+	specular = 20.0
+	reflective = 0.400
+	refractive = 1.0
+	transparency = 0.0
+	smoothness = 0.0
+	angle = 0.200
+	texture-id = 0
+}
+
+new object
+{
+	type = sphere
+	position = (5.170, 0.0, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 13765732
 	specular = 20.0
 	reflective = 0.0
 	refractive = 1.0
@@ -100,21 +100,7 @@ new light
 	type = point
 	intensity = 0.200
 	position = (0.0, 1.0, 0.0)
-	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
-}
-new light
-{
-	type = point
-	intensity = 0.200
-	position = (0.0, 1.0, 0.0)
-	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
-}
-new light
-{
-	type = point
-	intensity = 0.200
-	position = (0.0, 1.0, 0.0)
-	direction = (-2147483648.-2147483648, -2147483648.-2147483648, -2147483648.-2147483648)
+	direction = (-0.577, -0.577, -0.577)
 }
 
 
