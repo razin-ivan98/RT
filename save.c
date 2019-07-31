@@ -27,23 +27,29 @@ void save_with_defense(char *file_name)
 void save(t_rtv1 *rtv1, char *filename)
 {
     int fd;
-
+    char  *tmp;
     fd = open(filename, O_TRUNC | O_RDWR | O_CREAT ,  S_IRWXU | S_IRWXG | S_IRWXO);/////////////////
 
     int i;
     i = 0;
     ft_putstr_fd("camera_init\n{\n\tposition = (", fd);
-    ft_putstr_fd(ft_ftoa(rtv1->scene.camera.center.x), fd);
+    ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.camera.center.x), fd);
+    free(tmp);
     ft_putstr_fd(", ", fd);
-    ft_putstr_fd(ft_ftoa(rtv1->scene.camera.center.y), fd);
+    ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.camera.center.y), fd);
+    free(tmp);
     ft_putstr_fd(", ", fd);
-    ft_putstr_fd(ft_ftoa(rtv1->scene.camera.center.z), fd);
+    ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.camera.center.z), fd);
+    free(tmp);
     ft_putstr_fd(")\n\tdirection = (", fd);
-    ft_putstr_fd(ft_ftoa(rtv1->scene.camera.dir.x), fd);
+    ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.camera.dir.x), fd);
+    free(tmp);
     ft_putstr_fd(", ", fd);
-    ft_putstr_fd(ft_ftoa(rtv1->scene.camera.dir.y), fd);
+    ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.camera.dir.y), fd);
+    free(tmp);
     ft_putstr_fd(", ", fd);
-    ft_putstr_fd(ft_ftoa(rtv1->scene.camera.dir.z), fd);
+    ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.camera.dir.z), fd);
+    free(tmp);
     ft_putstr_fd(")\n}\n\n", fd);
 
     while (i < rtv1->scene.c_objs)
@@ -62,56 +68,80 @@ void save(t_rtv1 *rtv1, char *filename)
         else if (rtv1->scene.objs[i].type == triangle)
             ft_putstr_fd("triangle\n", fd);
         ft_putstr_fd("\tposition = (", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].center.x), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].center.x), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].center.y), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].center.y), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].center.z), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].center.z), fd);
+        free(tmp);
 
         ft_putstr_fd(")\n\tpos2 = (", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p2.x), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].p2.x), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p2.y), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].p2.y), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p2.z), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].p2.z), fd);
+        free(tmp);
 
         ft_putstr_fd(")\n\tpos3 = (", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p3.x), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].p3.x), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p3.y), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].p3.y), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].p3.z), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].p3.z), fd);
+        free(tmp);
 
         ft_putstr_fd(")\n\tdirection = (", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].dir.x), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].dir.x), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].dir.y), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].dir.y), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].dir.z), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].dir.z), fd);
+        free(tmp);
         ft_putstr_fd(")\n\trotate = (", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].rot.x), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].rot.x), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].rot.y), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].rot.y), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].rot.z), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].rot.z), fd);
+        free(tmp);
         ft_putstr_fd(")\n\tradius = ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].radius), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].radius), fd);
+        free(tmp);
         ft_putstr_fd("\n\tcolor = ", fd);
-        ft_putstr_fd(ft_itoa(rgb_to_color(rtv1->scene.objs[i].rgb)), fd);
+        ft_putstr_fd(tmp = ft_itoa(rgb_to_color(rtv1->scene.objs[i].rgb)), fd);
+        free(tmp);
         ft_putstr_fd("\n\tspecular = ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].specular), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].specular), fd);
+        free(tmp);
         ft_putstr_fd("\n\treflective = ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].reflective), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].reflective), fd);
+        free(tmp);
         ft_putstr_fd("\n\trefractive = ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].refractive), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].refractive), fd);
+        free(tmp);
         ft_putstr_fd("\n\ttransparency = ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].transparency), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].transparency), fd);
+        free(tmp);
         ft_putstr_fd("\n\tsmoothness = ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].smoothness), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].smoothness), fd);
+        free(tmp);
         ft_putstr_fd("\n\tangle = ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.objs[i].angle), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.objs[i].angle), fd);
+        free(tmp);
         ft_putstr_fd("\n\ttexture-id = ", fd);
-        ft_putstr_fd(ft_itoa(rtv1->scene.objs[i].tex), fd);
+        ft_putstr_fd(tmp = ft_itoa(rtv1->scene.objs[i].tex), fd);
+        free(tmp);
         ft_putstr_fd("\n}\n\n", fd);
         i++;
     }
@@ -127,19 +157,26 @@ void save(t_rtv1 *rtv1, char *filename)
             ft_putstr_fd("directional\n", fd);
 
         ft_putstr_fd("\tintensity = ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.lights[i].intensity), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.lights[i].intensity), fd);
+        free(tmp);
         ft_putstr_fd("\n\tposition = (", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.lights[i].center.x), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.lights[i].center.x), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.lights[i].center.y), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.lights[i].center.y), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.lights[i].center.z), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.lights[i].center.z), fd);
+        free(tmp);
         ft_putstr_fd(")\n\tdirection = (", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.lights[i].dir.x), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.lights[i].dir.x), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.lights[i].dir.y), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.lights[i].dir.y), fd);
+        free(tmp);
         ft_putstr_fd(", ", fd);
-        ft_putstr_fd(ft_ftoa(rtv1->scene.lights[i].dir.z), fd);
+        ft_putstr_fd(tmp = ft_ftoa(rtv1->scene.lights[i].dir.z), fd);
+        free(tmp);
         ft_putstr_fd(")\n}\n", fd);
         i++;
     }

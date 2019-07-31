@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include "rtv1.h"
 
 char *itoa_16(int n);
 
@@ -67,7 +68,7 @@ void md5(const unsigned char *initial_msg, size_t initial_len, unsigned char *di
         ;
 
     msg = malloc(new_len + 8);
-    memcpy(msg, initial_msg, initial_len);//////////////////////////////////
+    ft_memcpy(msg, initial_msg, initial_len);//////////////////////////////////
     msg[initial_len] = 0x80;
     for (offset = initial_len + 1; offset < new_len; offset++)
         msg[offset] = 0;
@@ -133,7 +134,7 @@ char *get_crypto_key(char *msg)
     char *ret;
 
     ret = (char *)malloc(64);
-    len = strlen(msg);///////////////////////////////////
+    len = ft_strlen(msg);///////////////////////////////////
 
     for (i = 0; i < 1000; i++) {
         md5((unsigned char *)msg, len, result);

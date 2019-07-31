@@ -1317,7 +1317,7 @@ __kernel void mishania(__global char *image_data, __global t_scene *scene, __glo
 
 	if (!cl_scene.soft && !cl_scene.advanced)
 		put_point_to_image(image_data, x, y, cast_ray(&cl_scene, cl_scene.camera.center, pixel_pos_3d, DEPTH, data));
-else
-	plus_pixels(image_data, x, y, cast_ray(&cl_scene, cl_scene.camera.center, pixel_pos_3d, DEPTH, data));
+	else
+		plus_pixels(image_data, x, y, cast_ray(&cl_scene, cl_scene.camera.center, pixel_pos_3d, DEPTH, data));
 
 }

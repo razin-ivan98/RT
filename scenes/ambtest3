@@ -46,7 +46,7 @@ new object
 new object
 {
 	type = plane
-	position = (0.0, -0.500, 7.0)
+	position = (0.0, -0.50, 7.0)
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (0.0, 1.0, 0.0)
@@ -84,7 +84,7 @@ new object
 new object
 {
 	type = sphere
-	position = (1.354, 0.44, 6.924)
+	position = (1.354, 0.440, 6.924)
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (-0.577, -0.577, -0.577)

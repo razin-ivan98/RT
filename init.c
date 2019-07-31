@@ -6,7 +6,7 @@
 /*   By: chorange <chorange@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/12 11:10:50 by chorange          #+#    #+#             */
-/*   Updated: 2019/07/13 20:43:06 by chorange         ###   ########.fr       */
+/*   Updated: 2019/07/24 19:15:37 by chorange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
 	source_str[read(fd, source_str, MAX_SOURCE_SIZE)] = 0;
 	source_size = ft_strlen(source_str);
 	close(fd);
-	rtv1->program = clCreateProgramWithSource(rtv1->context, 1,
-		(const char **)&source_str, (const size_t *)&source_size, &rtv1->ret);
-	rtv1->ret = clBuildProgram(rtv1->program, 1, &rtv1->device_id,
-		NULL, NULL, NULL);
-		printf("%d", rtv1->ret);
+	 rtv1->program = clCreateProgramWithSource(rtv1->context, 1,
+	 	(const char **)&source_str, (const size_t *)&source_size, &rtv1->ret);
+	 rtv1->ret = clBuildProgram(rtv1->program, 1, &rtv1->device_id,
+	 	NULL, NULL, NULL);
+	// 	printf("%d", rtv1->ret);
 
 	size_t l_size;
 	char *logg = NULL;
@@ -73,6 +73,7 @@ static void	compile_from_file(char *file_name, t_rtv1 *rtv1)
 		clGetProgramBuildInfo(rtv1->program, rtv1->device_id, CL_PROGRAM_BUILD_LOG, l_size, logg, NULL);
 		puts(logg);
 	free(logg);
+	free(source_str);
 //	free(source_str);
 }
 

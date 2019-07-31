@@ -1,4 +1,4 @@
-5F354D1468D25CD6565A7FC7D61FFF3B
+22547320F43993A0B5E8BADD4552E270
 camera_init
 {
 	position = (0.0, 0.0, -3.0)
@@ -7,19 +7,59 @@ camera_init
 
 new object
 {
-	type = cylinder
-	position = (0.0, 0.0, 4.0)
+	type = cone
+	position = (0.0, 0.0, 7.0)
 	pos2 = (0.0, 0.0, 0.0)
 	pos3 = (0.0, 0.0, 0.0)
 	direction = (0.0, 1.0, 0.0)
 	rotate = (0.0, 0.0, 0.0)
 	radius = 1.0
-	color = 65280
-	refractive = 1.0
-	specular = 0.0
+	color = 10195081
+	specular = 20.0
 	reflective = 0.0
+	refractive = 1.0
+	transparency = 0.0
+	smoothness = 0.0
+	angle = 0.200
+	texture-id = -1
+}
+
+new object
+{
+	type = cylinder
+	position = (-2.215, 0.0, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 1.0
+	color = 4298557
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.0
+	transparency = 0.0
+	smoothness = 0.0
 	angle = 0.0
-	texture-id = 0
+	texture-id = -1
+}
+
+new object
+{
+	type = cone
+	position = (0.0, 0.0, 7.0)
+	pos2 = (0.0, 0.0, 0.0)
+	pos3 = (0.0, 0.0, 0.0)
+	direction = (0.0, 1.0, 0.0)
+	rotate = (0.0, 0.0, 0.0)
+	radius = 0.0
+	color = 16633967
+	specular = 20.0
+	reflective = 0.0
+	refractive = 1.0
+	transparency = 0.0
+	smoothness = 0.0
+	angle = 0.200
+	texture-id = -1
 }
 
 new light
@@ -35,6 +75,27 @@ new light
 	intensity = 0.300
 	position = (0.0, 0.0, 0.0)
 	direction = (-0.577, -0.577, -0.577)
+}
+new light
+{
+	type = point
+	intensity = 0.200
+	position = (0.0, 1.0, 0.0)
+	direction = (0.0, 0.0, 0.0)
+}
+new light
+{
+	type = point
+	intensity = 0.200
+	position = (0.0, 1.0, 0.0)
+	direction = (0.0, 0.0, 0.0)
+}
+new light
+{
+	type = point
+	intensity = 0.200
+	position = (0.0, 1.0, 0.0)
+	direction = (0.0, 0.0, 0.0)
 }
 
 
